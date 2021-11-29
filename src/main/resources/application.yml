@@ -1,0 +1,39 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+    session:
+      tracking-modes: cookie
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/pictureboard
+    username: root
+    password: 11111111
+
+  jpa:
+    hibernate:
+      ddl-auto: update #create update none
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate:
+        #        show_sql: true
+        format_sql: true
+        use_sql_comment: true
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
+
+#  messages:
+#    basename: messages,errors
+
+file:
+  profile: /Users/hipo/Desktop/pictureboard/src/main/resources/static/profile_img/
+  picture: /Users/hipo/Desktop/pictureboard/src/main/resources/static/picture_img/
