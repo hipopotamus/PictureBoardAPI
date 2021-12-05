@@ -16,6 +16,6 @@ public class PictureboardApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(PictureboardApplication.class, args);
-        System.out.printf("hello");
+        System.out.printf("hell");
     }
 }
