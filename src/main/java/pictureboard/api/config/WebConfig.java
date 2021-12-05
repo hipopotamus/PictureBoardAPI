@@ -13,10 +13,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final AccountService accountService;
-
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
-        resolvers.add(new LoginAccountArgumentResolver(accountService));
+        resolvers.add(new LoginAccountArgumentResolver());
     }
 }

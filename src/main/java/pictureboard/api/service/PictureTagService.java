@@ -3,9 +3,9 @@ package pictureboard.api.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import pictureboard.api.domain.Picture;
-import pictureboard.api.domain.PictureTag;
-import pictureboard.api.domain.Tag;
+import pictureboard.api.domain.entity.Picture;
+import pictureboard.api.domain.entity.PictureTag;
+import pictureboard.api.domain.entity.Tag;
 import pictureboard.api.repository.PictureRepository;
 import pictureboard.api.repository.PictureTagRepository;
 import pictureboard.api.repository.TagRepository;
@@ -24,16 +24,9 @@ public class PictureTagService {
     private final TagService tagService;
 
     @Transactional
-    public void creatPictureTagById(Long pictureId, Long tagId) {
-        Picture picture = pictureRepository.findById(pictureId).orElse(null);
-        Tag tag = tagRepository.findById(tagId).orElse(null);
-
+    public void createPictureTag(Picture picture, Tag tag) {
         pictureTagRepository.save(new PictureTag(picture, tag));
-    }
-
-    @Transactional
-    public void creatPictureTag(Picture picture, Tag tag) {
-        pictureTagRepository.save(new PictureTag(picture, tag));
+        tag.addRelatedPictureCount();
     }
 
     public void createPictureTags(Long pictureId, List<String> tagTitles) {
@@ -44,20 +37,19 @@ public class PictureTagService {
         Picture picture = pictureRepository.findById(pictureId).orElse(null);
         for (String tagTitle : tagTitles) {
             Tag tag = tagRepository.existsByTitle(tagTitle) ? tagRepository.findByTitle(tagTitle) : tagService.createTage(tagTitle);
-            creatPictureTag(picture, tag);
+            createPictureTag(picture, tag);
         }
     }
 
-    public List<String> makeTagTitles(Long pictureId) {
-        List<PictureTag> pictureTags = pictureTagRepository.findTitlesByPictureId(pictureId);
+    @Transactional
+    public void deletePictureTag(Long pictureId, List<String> tagTitles) {
+        Picture picture = pictureRepository.findById(pictureId).orElseThrow(RuntimeException::new);
 
-        if (pictureTags == null || pictureTags.isEmpty()) {
-            return new ArrayList<String>();
+        for (String tagTitle : tagTitles) {
+            Tag tag = tagRepository.findByTitle(tagTitle);
+            PictureTag pictureTag = pictureTagRepository.findByPictureAndTag(picture, tag);
+            pictureTagRepository.delete(pictureTag);
+            tag.removeRelatedPictureCount();
         }
-
-        List<String> result = new ArrayList<String>();
-        pictureTags.forEach(pt -> result.add(pt.getTag().getTitle()));
-
-        return result;
     }
 }

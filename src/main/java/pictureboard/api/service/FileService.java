@@ -1,6 +1,5 @@
 package pictureboard.api.service;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,8 +20,10 @@ public class FileService {
 
         String originalFileName = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFileName);
-        multipartFile.transferTo(new File(getPullPath(path, storeFileName)));
-        return new Img(originalFileName, storeFileName);
+        String fullPath = getFullPath(path, storeFileName);
+
+        multipartFile.transferTo(new File(fullPath));
+        return new Img(originalFileName, storeFileName, fullPath);
     }
 
     private String createStoreFileName(String originalFileName) {
@@ -36,7 +37,7 @@ public class FileService {
         return originalFileName.substring(pos + 1);
     }
 
-    public String getPullPath(String path, String storeFileName) {
+    public String getFullPath(String path, String storeFileName) {
         return path + storeFileName;
     }
 }

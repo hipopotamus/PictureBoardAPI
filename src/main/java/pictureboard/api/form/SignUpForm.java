@@ -2,10 +2,9 @@ package pictureboard.api.form;
 
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.Range;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.multipart.MultipartFile;
-import pictureboard.api.domain.Gender;
+import pictureboard.api.domain.constant.Gender;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

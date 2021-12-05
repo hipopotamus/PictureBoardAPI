@@ -1,14 +1,16 @@
-package pictureboard.api.domain;
+package pictureboard.api.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import pictureboard.api.domain.BaseTime;
+import pictureboard.api.domain.constant.OnClickStatus;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
-public class Likes extends BaseTime{
+public class Likes extends BaseTime {
 
     @Id
     @GeneratedValue

@@ -1,4 +1,4 @@
-package pictureboard.api.domain;
+package pictureboard.api.domain.constant;
 
 public enum OnClickStatus {
     ON, OFF

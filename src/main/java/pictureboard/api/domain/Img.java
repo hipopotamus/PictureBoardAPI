@@ -12,11 +12,14 @@ public class Img {
 
     private String storeFileName;
 
+    private String fullPath;
+
     protected Img() {
     }
 
-    public Img(String fileName, String storeFileName) {
+    public Img(String fileName, String storeFileName, String fullPath) {
         this.fileName = fileName;
         this.storeFileName = storeFileName;
+        this.fullPath = fullPath;
     }
 }

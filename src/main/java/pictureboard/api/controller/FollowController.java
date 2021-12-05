@@ -5,7 +5,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pictureboard.api.argumentresolver.LoginAccount;
-import pictureboard.api.form.LoginAccountForm;
+import pictureboard.api.dto.AccountDto;
+import pictureboard.api.service.AccountService;
 import pictureboard.api.service.FollowService;
 
 @RestController
@@ -13,10 +14,11 @@ import pictureboard.api.service.FollowService;
 public class FollowController {
 
     private final FollowService followService;
+    private final AccountService accountService;
 
-    @PostMapping("/follow/{memberId}")
-    public String clickFollow(@LoginAccount LoginAccountForm loginAccountForm, @PathVariable Long memberId) {
-        followService.onClick(loginAccountForm.getId(), memberId);
-        return "clickFollow Success";
+    @PostMapping("/follow/{passiveAccountId}")
+    public AccountDto clickFollow(@LoginAccount Long accountId, @PathVariable Long passiveAccountId) {
+        followService.onClick(accountId, passiveAccountId);
+        return accountService.makeAccountDtoById(accountId);
     }
 }

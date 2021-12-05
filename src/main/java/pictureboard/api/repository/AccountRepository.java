@@ -1,9 +1,13 @@
 package pictureboard.api.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import pictureboard.api.domain.Account;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import pictureboard.api.domain.entity.Account;
 
-public interface AccountRepository extends JpaRepository<Account, Long> {
+import java.util.List;
+
+public interface AccountRepository extends JpaRepository<Account, Long>, AccountRepositoryCustom {
 
     boolean existsByUsername(String username);
 
@@ -11,5 +15,13 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
 
     Account findByUsername(String username);
 
-    Account findByNickname(String nickname);
+    @Query("select pa from Follow f " +
+            "join f.activeAccount aa " +
+            "join f.passiveAccount pa where aa.id = :accountId")
+    List<Account> findPassiveFollowAccount(@Param("accountId") Long accountId);
+
+    @Query("select aa from Follow f " +
+            "join f.activeAccount aa " +
+            "join f.passiveAccount pa where pa.id = :accountId")
+    List<Account> findActiveFollowAccount(@Param("accountId") Long accountId);
 }

@@ -1,19 +1,22 @@
 package pictureboard.api.repository;
 
 
-import org.springframework.data.domain.Page;
+import com.querydsl.core.QueryResults;
 import org.springframework.data.domain.Pageable;
-import pictureboard.api.dto.LookUpPictureDto;
-import pictureboard.api.dto.PicturePageDto;
-import pictureboard.api.dto.RoomDto;
-import pictureboard.api.dto.RoomPictureDto;
+import pictureboard.api.domain.entity.Picture;
 import pictureboard.api.form.PictureSearchCond;
+
+import java.util.List;
 
 public interface PictureRepositoryCustom {
 
-    LookUpPictureDto makeLookUpPictureDto(Long pictureId, Long LoginAccountId);
+    Picture findPictureForDto(Long pictureId);
 
-    Page<PicturePageDto> picturePage(Pageable pageable);
+    List<Picture> findPictureByFollow(Long accountId, int size);
 
-    Page<PicturePageDto> pictureSearchPage(PictureSearchCond pictureSearchCond, Pageable pageable);
+    List<Picture> findPictureOrderByLikes(int size);
+
+    QueryResults<Picture> picturePage(Pageable pageable);
+
+    QueryResults<Picture> pictureSearchPage(PictureSearchCond pictureSearchCond, Pageable pageable);
 }

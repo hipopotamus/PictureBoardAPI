@@ -10,7 +10,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import pictureboard.api.domain.Account;
+import pictureboard.api.domain.entity.Account;
 import pictureboard.api.domain.UserAccount;
 import pictureboard.api.variable.JwtProperties;
 

@@ -7,5 +7,9 @@ public class PictureSearchCond {
 
     private String titleOrTag;
 
+    private String title;
+
+    private String tagTitle;
+
     private String nickname;
 }

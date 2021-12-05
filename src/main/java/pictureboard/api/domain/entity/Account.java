@@ -1,10 +1,10 @@
-package pictureboard.api.domain;
+package pictureboard.api.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.ToString;
-import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.stereotype.Controller;
+import pictureboard.api.domain.BaseTime;
+import pictureboard.api.domain.Img;
+import pictureboard.api.domain.constant.Gender;
 import pictureboard.api.exception.NotBelowZeroException;
 
 import javax.persistence.*;
@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Entity
 @EqualsAndHashCode(of = "id", callSuper = false)
-public class Account extends BaseTime{
+public class Account extends BaseTime {
 
     @Id @GeneratedValue
     @Column(name = "account_id")
@@ -91,4 +91,12 @@ public class Account extends BaseTime{
         this.passiveFollowCount = tmpPassiveFollowCount;
     }
     //** Follow 추가, 제거
+
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    public void updateProfileImg(Img profileImg) {
+        this.profileImg = profileImg;
+    }
 }

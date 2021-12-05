@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import pictureboard.api.repository.AccountRepository;
-import pictureboard.api.domain.Account;
+import pictureboard.api.domain.entity.Account;
 import pictureboard.api.domain.UserAccount;
 
 import javax.servlet.FilterChain;

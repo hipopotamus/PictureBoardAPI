@@ -2,7 +2,7 @@ package pictureboard.api.form;
 
 import lombok.Data;
 import org.springframework.web.multipart.MultipartFile;
-import pictureboard.api.domain.PictureType;
+import pictureboard.api.domain.constant.PictureType;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

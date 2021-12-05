@@ -3,22 +3,22 @@ package pictureboard.api.service;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
-import pictureboard.api.form.LoginAccountForm;
-import pictureboard.api.form.SignUpForm;
+import pictureboard.api.dto.AccountDto;
 import pictureboard.api.repository.AccountRepository;
-import pictureboard.api.domain.Account;
-import pictureboard.api.domain.Gender;
+import pictureboard.api.domain.entity.Account;
+import pictureboard.api.domain.constant.Gender;
 import pictureboard.api.domain.Img;
-import pictureboard.api.repository.PictureRepository;
-import pictureboard.api.repository.PictureRepositoryCustom;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -42,13 +42,51 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
-    public LoginAccountForm makeLoginAccountForm(String username) {
-        Account account = accountRepository.findByUsername(username);
-        LoginAccountForm loginAccountForm = modelMapper.map(account, LoginAccountForm.class);
+    public AccountDto makeAccountDtoById(Long loginAccountId) {
+        Account account = accountRepository.findById(loginAccountId).orElse(null);
+        return makeAccountDtoByAccount(account);
+    }
 
-        String profileFullPath = fileService.getPullPath(profileImgPath, account.getProfileImg().getStoreFileName());
-        loginAccountForm.setProfileImgPath(profileFullPath);
-        return loginAccountForm;
+    public AccountDto makeAccountDtoByAccount(Account account) {
+        return modelMapper.map(account, AccountDto.class);
+    }
+
+    public Page<AccountDto> searchPageByNickname(String nickname, Pageable pageable) {
+        return accountRepository.searchPageByNickname(nickname, pageable);
+    }
+
+    @Transactional
+    public AccountDto updateNickname(Long accountId, String nickname) {
+        Account account = accountRepository.findById(accountId).orElse(null);
+        account.updateNickname(nickname);
+        return makeAccountDtoByAccount(account);
+    }
+
+    @Transactional
+    public AccountDto updateProfileImg(Long accountId, MultipartFile profileFile) throws IOException {
+        Account account = accountRepository.findById(accountId).orElse(null);
+        Img profileImg = fileService.storeFile(profileFile, profileImgPath);
+        account.updateProfileImg(profileImg);
+
+        return makeAccountDtoByAccount(account);
+    }
+
+    public List<AccountDto> findPassiveFollowAccounts(Long accountId) {
+        List<Account> passiveFollowAccounts = accountRepository.findPassiveFollowAccount(accountId);
+        return passiveFollowAccounts.stream()
+                .map(this::makeAccountDtoByAccount)
+                .collect(Collectors.toList());
+    }
+
+    public List<AccountDto> findActiveFollowAccounts(Long accountId) {
+        List<Account> activeFollowAccounts = accountRepository.findActiveFollowAccount(accountId);
+        return activeFollowAccounts.stream()
+                .map(this::makeAccountDtoByAccount)
+                .collect(Collectors.toList());
+    }
+
+    public Account findById(Long accountId) {
+        return accountRepository.findById(accountId).orElseThrow(NullPointerException::new);
     }
 
     public boolean existByUsername(String username) {

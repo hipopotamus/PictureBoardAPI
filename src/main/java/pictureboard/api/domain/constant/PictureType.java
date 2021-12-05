@@ -1,4 +1,4 @@
-package pictureboard.api.domain;
+package pictureboard.api.domain.constant;
 
 import javax.persistence.Enumerated;
 
