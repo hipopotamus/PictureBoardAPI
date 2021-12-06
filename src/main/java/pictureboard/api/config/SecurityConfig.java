@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -42,12 +43,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), accountRepository))
                 .authorizeRequests()
-                .mvcMatchers("/", "/sign", "/login").permitAll()
+                .mvcMatchers("/", "/sign", "/login", "/account/login","/swagger-ui.html", "/webjars/**",
+                        "/v2/**", "/swagger-resources/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/picture/**").permitAll()
-                .antMatchers("/user/**")
-                .access("hasRole('ROLE_USER') or hasRole('ROLE_MANAGER')")
-                .antMatchers("/manager/**")
-                .access("hasRole('ROLE_MANAGER')")
                 .anyRequest().authenticated()
                 ;
     }
@@ -56,5 +54,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

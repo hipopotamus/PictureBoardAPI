@@ -88,6 +88,8 @@ public class PictureRepositoryImpl implements PictureRepositoryCustom{
                 .selectFrom(picture)
                 .join(picture.account, account).fetchJoin()
                 .orderBy(picture.lastModifiedDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetchResults();
     }
 
@@ -105,6 +107,8 @@ public class PictureRepositoryImpl implements PictureRepositoryCustom{
                         titleEq(pictureSearchCond.getTitle()),
                         tagEq(pictureSearchCond.getTagTitle()))
                 .orderBy(picture.lastModifiedDate.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetchResults();
     }
 

@@ -16,11 +16,11 @@ spring:
     username: root
     password: 11111111
   profiles:
-    active: local
+    active: test
 
   jpa:
     hibernate:
-      ddl-auto: update #create update none
+      ddl-auto: create #create update none
       naming:
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties:

@@ -43,6 +43,8 @@ public class AccountRepositoryImpl implements AccountRepositoryCustom{
                 )
                 .from(account)
                 .where(nicknameEq(nickname))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetchResults();
 
         List<AccountDto> content = results.getResults();

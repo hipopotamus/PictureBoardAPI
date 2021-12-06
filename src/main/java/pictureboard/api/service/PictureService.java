@@ -51,6 +51,18 @@ public class PictureService {
         return picture;
     }
 
+    @Transactional
+    public Picture createPictureTest(String title, String description, PictureType pictureType,
+                                 Long loginAccountId, List<String> tagTitles) throws IOException {
+        Account account = accountRepository.findById(loginAccountId).orElse(null);
+        Img pictureImg = new Img("testPicture", "testStorePicture", "testFullPath");
+
+        Picture picture = pictureRepository.save(new Picture(title, description, pictureImg, pictureType, account));
+        pictureTagService.createPictureTags(picture.getId(), tagTitles);
+
+        return picture;
+    }
+
     public PictureDto makePictureDtoById(Long pictureId) {
         Picture picture = pictureRepository.findPictureForDto(pictureId);
         return makePictureDto(picture);
@@ -118,5 +130,9 @@ public class PictureService {
         return pictures.stream()
                 .map(this::makePictureDto)
                 .collect(Collectors.toList());
+    }
+
+    public List<Picture> findAll() {
+        return pictureRepository.findAll();
     }
 }

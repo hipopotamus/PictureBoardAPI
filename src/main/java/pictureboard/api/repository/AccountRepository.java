@@ -24,4 +24,6 @@ public interface AccountRepository extends JpaRepository<Account, Long>, Account
             "join f.activeAccount aa " +
             "join f.passiveAccount pa where pa.id = :accountId")
     List<Account> findActiveFollowAccount(@Param("accountId") Long accountId);
+
+    Account findByNickname(String nickname);
 }

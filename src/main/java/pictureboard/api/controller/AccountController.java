@@ -1,5 +1,7 @@
 package pictureboard.api.controller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,25 +15,32 @@ import pictureboard.api.domain.entity.Account;
 import pictureboard.api.dto.AccountDto;
 import pictureboard.api.dto.Result;
 import pictureboard.api.form.SignUpForm;
+import pictureboard.api.form.UsernamePasswordForm;
 import pictureboard.api.service.AccountService;
+import pictureboard.api.service.AuthService;
 import pictureboard.api.validator.SignUpFormValidator;
+import pictureboard.api.variable.JwtProperties;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
+@Api(tags = {"Account"})
 @RestController
 @RequiredArgsConstructor
 public class AccountController {
 
     private final AccountService accountService;
     private final SignUpFormValidator signUpFormValidator;
+    private final AuthService authService;
 
     @InitBinder("signUpForm")
     public void initBinder(WebDataBinder webDataBinder) {
         webDataBinder.addValidators(signUpFormValidator);
     }
 
+    @ApiOperation(value = "회원 가입")
     @PostMapping("/sign")
     public Object signUp(@Valid @ModelAttribute SignUpForm signUpForm, Errors errors) throws IOException {
 
@@ -86,5 +95,10 @@ public class AccountController {
         return accountService.updateProfileImg(loginAccountId, profileFile);
     }
 
-
+    @PostMapping("/account/login")
+    public String login(@RequestBody UsernamePasswordForm usernamePasswordForm, HttpServletResponse response) {
+        String jwtToken = authService.login(usernamePasswordForm);
+        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
+        return "yes";
+    }
 }

@@ -29,6 +29,7 @@ public class PictureTagService {
         tag.addRelatedPictureCount();
     }
 
+    @Transactional
     public void createPictureTags(Long pictureId, List<String> tagTitles) {
         if (tagTitles == null || tagTitles.isEmpty()) {
             return;

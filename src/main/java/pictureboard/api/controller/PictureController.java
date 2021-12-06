@@ -92,13 +92,13 @@ public class PictureController {
     }
 
     @PostMapping("/picture/tag/update")
-    public PictureDto updatePictureTags(PictureTagForm pictureTagForm) {
+    public PictureDto updatePictureTags(@RequestBody PictureTagForm pictureTagForm) {
         pictureTagService.createPictureTags(pictureTagForm.getId(), pictureTagForm.getTagTitles());
         return pictureService.makePictureDtoById(pictureTagForm.getId());
     }
 
     @PostMapping("/picture/tag/delete")
-    public String deletePictureTags(PictureTagForm pictureTagForm) {
+    public String deletePictureTags(@RequestBody PictureTagForm pictureTagForm) {
         pictureTagService.deletePictureTag(pictureTagForm.getId(), pictureTagForm.getTagTitles());
         return "delete pictureTags success";
     }

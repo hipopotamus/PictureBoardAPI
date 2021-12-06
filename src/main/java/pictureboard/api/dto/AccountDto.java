@@ -24,19 +24,19 @@ public class AccountDto {
 
     private LocalDate birthDate;
 
-    private int activeFollow;
+    private int activeFollowCount;
 
-    private int passiveFollow;
+    private int passiveFollowCount;
 
     @QueryProjection
-    public AccountDto(Long id, String username, String nickname, Img profileImg, Gender gender, LocalDate birthDate, int activeFollow, int passiveFollow) {
+    public AccountDto(Long id, String username, String nickname, Img profileImg, Gender gender, LocalDate birthDate, int activeFollowCount, int passiveFollowCount) {
         this.id = id;
         this.username = username;
         this.nickname = nickname;
         this.profileImg = profileImg;
         this.gender = gender;
         this.birthDate = birthDate;
-        this.activeFollow = activeFollow;
-        this.passiveFollow = passiveFollow;
+        this.activeFollowCount = activeFollowCount;
+        this.passiveFollowCount = passiveFollowCount;
     }
 }

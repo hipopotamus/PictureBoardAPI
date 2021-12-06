@@ -42,6 +42,15 @@ public class AccountService {
         return accountRepository.save(account);
     }
 
+    @Transactional
+    public Account joinAccountTest(String username, String password, String nickname, Gender gender, LocalDate birthDate) throws IOException {
+        String encodePassword = bCryptPasswordEncoder.encode(password);
+        Img profileImg = new Img("testFile", "testStoreFile", "testFullPath");
+        Account account = new Account(username, encodePassword, nickname, profileImg, gender, birthDate);
+        account.settingRoles("ROLE_USER");
+        return accountRepository.save(account);
+    }
+
     public AccountDto makeAccountDtoById(Long loginAccountId) {
         Account account = accountRepository.findById(loginAccountId).orElse(null);
         return makeAccountDtoByAccount(account);
@@ -95,5 +104,13 @@ public class AccountService {
 
     public boolean existByNickname(String nickname) {
         return accountRepository.existsByNickname(nickname);
+    }
+
+    public Account findByNickname(String nickname) {
+        return accountRepository.findByNickname(nickname);
+    }
+
+    public List<Account> findAll() {
+        return accountRepository.findAll();
     }
 }
