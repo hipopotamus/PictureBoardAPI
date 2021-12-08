@@ -54,10 +54,11 @@ public class PictureRepositoryImpl implements PictureRepositoryCustom{
 
         return jpaQueryFactory
                 .selectFrom(picture)
+                .distinct()
                 .join(picture.account, account).fetchJoin()
                 .join(picture.pictureTags, pictureTag).fetchJoin()
                 .join(pictureTag.tag, tag).fetchJoin()
-                .where(account.id.eq(JPAExpressions
+                .where(account.id.in(JPAExpressions
                         .select(follow.passiveAccount.id)
                         .from(follow)
                         .join(follow.activeAccount, activeAccount)

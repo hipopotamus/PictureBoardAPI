@@ -43,7 +43,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), accountRepository))
                 .authorizeRequests()
-                .mvcMatchers("/", "/sign", "/login", "/account/login","/swagger-ui.html", "/webjars/**",
+                .mvcMatchers("/", "/sign", "/login", "/myLogin","/swagger-ui.html", "/webjars/**",
                         "/v2/**", "/swagger-resources/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/picture/**").permitAll()
                 .anyRequest().authenticated()

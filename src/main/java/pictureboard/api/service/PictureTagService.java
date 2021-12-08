@@ -25,8 +25,9 @@ public class PictureTagService {
 
     @Transactional
     public void createPictureTag(Picture picture, Tag tag) {
-        pictureTagRepository.save(new PictureTag(picture, tag));
+        PictureTag pictureTag = pictureTagRepository.save(new PictureTag(picture, tag));
         tag.addRelatedPictureCount();
+        pictureTag.changePicture(picture);
     }
 
     @Transactional

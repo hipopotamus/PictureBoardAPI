@@ -1,6 +1,8 @@
 package pictureboard.api.controller;
 
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,13 +22,14 @@ import pictureboard.api.service.AccountService;
 import pictureboard.api.service.AuthService;
 import pictureboard.api.validator.SignUpFormValidator;
 import pictureboard.api.variable.JwtProperties;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 
-@Api(tags = {"Account"})
+@Api(tags = {"2. Account"})
 @RestController
 @RequiredArgsConstructor
 public class AccountController {
@@ -40,9 +43,9 @@ public class AccountController {
         webDataBinder.addValidators(signUpFormValidator);
     }
 
-    @ApiOperation(value = "회원 가입")
-    @PostMapping("/sign")
-    public Object signUp(@Valid @ModelAttribute SignUpForm signUpForm, Errors errors) throws IOException {
+    @ApiOperation(value = "회원 가입", notes = "회원 정보를 받아 새로운 회원을 생성합니다.")
+    @PostMapping("/account")
+    public Object signUp(@Valid @ModelAttribute SignUpForm signUpForm, @ApiIgnore Errors errors) throws IOException {
 
         if (errors.hasErrors()) {
             return errors.getAllErrors();
@@ -54,29 +57,42 @@ public class AccountController {
         return accountService.makeAccountDtoByAccount(account);
     }
 
+    @ApiOperation(value = "내 닉네임 수정", notes = "변경할 닉네임을 받아 회원의 닉네임을 수정합니다.")
+    @PostMapping("/account/nickname")
+    public AccountDto updateNickname(@ApiIgnore @LoginAccount Long loginAccountId, @RequestParam String nickname) {
+        return accountService.updateNickname(loginAccountId, nickname);
+    }
+
+    @ApiOperation(value = "내 프로필 이미지 수정", notes = "변경할 프로필 이미지를 받아 회원의 프로필 이미지를 수정합니다.")
+    @PostMapping("/account/profileImg")
+    public AccountDto updateProfileImg(@ApiIgnore @LoginAccount Long loginAccountId,
+                                       @RequestParam MultipartFile profileFile) throws IOException {
+        return accountService.updateProfileImg(loginAccountId, profileFile);
+    }
+
+    @ApiOperation(value = "로그인 회원 정보 조회", notes = "현재 로그인한 회원의 정보를 조회합니다.")
     @GetMapping("/loginAccount")
-    public AccountDto loginAccount(@LoginAccount Long loginAccountId) {
+    public AccountDto loginAccount(@ApiIgnore @LoginAccount Long loginAccountId) {
         return accountService.makeAccountDtoById(loginAccountId);
     }
 
+    @ApiOperation(value = "회원 정보 조회", notes = "회원 아이디로 회원 정보를 조회합니다.")
     @GetMapping("/account/{accountId}")
     public AccountDto account(@PathVariable("accountId") Long accountId) {
         return accountService.makeAccountDtoById(accountId);
     }
 
-    @GetMapping("/search/accounts")
-    public Page<AccountDto> searchAccounts(@Param("nickname") String nickname, Pageable pageable) {
+    @ApiOperation(value = "회원 검색", notes = "검색 조건으로 닉네임을 받아 조건에 맞는 회원을 모두 조회합니다.\n" +
+            "'페이지 번호'와 '페이지 크기'를 받아 페이지로 조회됩니다.")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "page", value = "페이지 번호", dataType = "int", paramType = "query"),
+            @ApiImplicitParam(name = "size", value = "페이지 사이즈", dataType = "int", paramType = "query")})
+    @GetMapping("/account/page/search")
+    public Page<AccountDto> searchAccounts(@RequestParam("nickname") String nickname, @ApiIgnore Pageable pageable) {
         return accountService.searchPageByNickname(nickname, pageable);
     }
 
-    @GetMapping("account/passiveFollowAccount/{accountId}")
-    public Result<List<AccountDto>> findPassiveFollowAccount(@PathVariable("accountId") Long accountId) {
-        List<AccountDto> passiveFollowAccounts = accountService.findPassiveFollowAccounts(accountId);
-        Result<List<AccountDto>> result = new Result<>();
-        result.setData(passiveFollowAccounts);
-        return result;
-    }
-
+    @ApiOperation(value = "내가 팔로우한 회원 조회", notes = "회원 아이디를 받아 해당 회원이 팔로우한 모든 회원을 조회합니다.")
     @GetMapping("account/activeFollowAccount/{accountId}")
     public Result<List<AccountDto>> findActiveFollowAccount(@PathVariable("accountId") Long accountId) {
         List<AccountDto> passiveFollowAccounts = accountService.findActiveFollowAccounts(accountId);
@@ -85,20 +101,12 @@ public class AccountController {
         return result;
     }
 
-    @PostMapping("/account/nickname")
-    public AccountDto updateNickname(@LoginAccount Long loginAccountId, @RequestParam String nickname) {
-        return accountService.updateNickname(loginAccountId, nickname);
-    }
-
-    @PostMapping("/account/profileImg")
-    public AccountDto updateProfileImg(@LoginAccount Long loginAccountId, @RequestParam MultipartFile profileFile) throws IOException {
-        return accountService.updateProfileImg(loginAccountId, profileFile);
-    }
-
-    @PostMapping("/account/login")
-    public String login(@RequestBody UsernamePasswordForm usernamePasswordForm, HttpServletResponse response) {
-        String jwtToken = authService.login(usernamePasswordForm);
-        response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
-        return "yes";
+    @ApiOperation(value = "나를 팔로우한 회원 조회", notes = "회원 아이디를 받아 해당 회원을 팔로우한 모든 회원을 조회합니다.")
+    @GetMapping("account/passiveFollowAccount/{accountId}")
+    public Result<List<AccountDto>> findPassiveFollowAccount(@PathVariable("accountId") Long accountId) {
+        List<AccountDto> passiveFollowAccounts = accountService.findPassiveFollowAccounts(accountId);
+        Result<List<AccountDto>> result = new Result<>();
+        result.setData(passiveFollowAccounts);
+        return result;
     }
 }
