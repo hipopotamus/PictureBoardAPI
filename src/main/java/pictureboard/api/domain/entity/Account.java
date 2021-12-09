@@ -2,6 +2,8 @@ package pictureboard.api.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import pictureboard.api.domain.BaseTime;
 import pictureboard.api.domain.Img;
 import pictureboard.api.domain.constant.Gender;
@@ -16,6 +18,7 @@ import java.util.List;
 @Getter
 @Entity
 @EqualsAndHashCode(of = "id", callSuper = false)
+@Where(clause = "deleted = false")
 public class Account extends BaseTime {
 
     @Id @GeneratedValue
@@ -41,6 +44,8 @@ public class Account extends BaseTime {
     private int activeFollowCount = 0;
 
     private int passiveFollowCount = 0;
+
+
 
     protected Account() {
     }

@@ -2,6 +2,8 @@ package pictureboard.api.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import pictureboard.api.domain.BaseBy;
 import pictureboard.api.domain.Img;
 import pictureboard.api.domain.constant.PictureType;
@@ -11,9 +13,10 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
+@Entity
+@Where(clause = "deleted = false")
 public class Picture extends BaseBy {
 
     @Id @GeneratedValue
@@ -38,6 +41,12 @@ public class Picture extends BaseBy {
 
     @OneToMany(mappedBy = "picture")
     private List<PictureTag> pictureTags = new ArrayList<>();
+
+//    @OneToMany(mappedBy = "picture")
+//    private List<Comment> comments = new ArrayList<>();
+//
+//    @OneToMany(mappedBy = "picture")
+//    private List<Likes> likesList = new ArrayList<>();
 
     protected Picture() {
     }

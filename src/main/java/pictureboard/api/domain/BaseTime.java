@@ -22,4 +22,10 @@ public class BaseTime {
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
+
+    private boolean deleted = false;
+
+    public void softDelete() {
+        this.deleted = true;
+    }
 }

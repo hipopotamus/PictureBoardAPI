@@ -15,4 +15,6 @@ public interface PictureTagRepository extends JpaRepository<PictureTag, Long> {
     List<PictureTag> findTitlesByPictureId(@Param("pictureId") Long pictureId);
 
     PictureTag findByPictureAndTag(Picture picture, Tag tag);
+
+    List<PictureTag> findByPictureId(Long pictureId);
 }

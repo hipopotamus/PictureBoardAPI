@@ -26,4 +26,5 @@ public interface PictureRepository extends JpaRepository<Picture, Long>, Picture
             "join fetch pt.tag t " +
             "where a.id = :accountId")
     List<Picture> findByAccountLikes(@Param("accountId") Long accountId);
+
 }

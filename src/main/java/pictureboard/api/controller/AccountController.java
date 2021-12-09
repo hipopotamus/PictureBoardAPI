@@ -109,4 +109,9 @@ public class AccountController {
         result.setData(passiveFollowAccounts);
         return result;
     }
+
+    @PostMapping("account/{accountId}")
+    public void deleteAccount(@PathVariable("accountId") Long accountId) {
+        accountService.deleteAccount(accountId);
+    }
 }

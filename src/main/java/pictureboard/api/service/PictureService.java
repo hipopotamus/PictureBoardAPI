@@ -33,6 +33,7 @@ public class PictureService {
     private final PictureRepository pictureRepository;
     private final FileService fileService;
     private final PictureTagService pictureTagService;
+    private final SoftDeleteService softDeleteService;
     private final ModelMapper modelMapper;
 
     @Value("${file.picture}")
@@ -134,5 +135,10 @@ public class PictureService {
 
     public List<Picture> findAll() {
         return pictureRepository.findAll();
+    }
+
+    @Transactional
+    public void deletePicture(Long pictureId) {
+        softDeleteService.softDelete(pictureId, Picture.class);
     }
 }

@@ -16,4 +16,10 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             "where a = :activeFollowAccount and p = :passiveFollowAccount")
     Follow findByActiveFollowAccountAndPassiveFollowAccount(@Param("activeFollowAccount") Account activeFollowAccount,
                                                             @Param("passiveFollowAccount") Account passiveFollowAccount);
+
+    @Query("select f from Follow f " +
+            "join f.activeAccount a " +
+            "join f.passiveAccount p " +
+            "where a.id =:accountId or p.id =:accountId")
+    List<Follow> findByAccountId(@Param("accountId") Long accountId);
 }

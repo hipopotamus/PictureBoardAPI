@@ -14,4 +14,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "join c.picture p " +
             "where p.id = :pictureId")
     List<Comment> findByPictureFetchAccount(@Param("pictureId") Long pictureId);
+
+    List<Comment> findByPictureId(Long pictureId);
 }

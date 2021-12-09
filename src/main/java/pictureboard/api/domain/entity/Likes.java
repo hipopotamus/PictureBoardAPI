@@ -2,6 +2,8 @@ package pictureboard.api.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import pictureboard.api.domain.BaseTime;
 import pictureboard.api.domain.constant.OnClickStatus;
 
@@ -10,6 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @EqualsAndHashCode(of = "id", callSuper = false)
+@Where(clause = "deleted = false")
 public class Likes extends BaseTime {
 
     @Id

@@ -129,4 +129,10 @@ public class PictureController {
         result.setData(pictureDtoList);
         return result;
     }
+
+    @DeleteMapping("/picture/{pictureId}")
+    public String deletePicture(@PathVariable("pictureId") Long pictureId) {
+        pictureService.deletePicture(pictureId);
+        return "delete picture success";
+    }
 }

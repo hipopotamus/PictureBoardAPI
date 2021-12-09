@@ -27,6 +27,7 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final FileService fileService;
+    private final SoftDeleteService softDeleteService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
 
@@ -112,5 +113,10 @@ public class AccountService {
 
     public List<Account> findAll() {
         return accountRepository.findAll();
+    }
+
+    @Transactional
+    public void deleteAccount(Long accountId) {
+        softDeleteService.softDelete(accountId, Account.class);
     }
 }
