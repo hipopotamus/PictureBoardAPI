@@ -42,6 +42,10 @@ public class SoftDeleteService {
             softDeleteComment(id);
             return;
         }
+        if (c.isAssignableFrom(PictureTag.class)) {
+            softDeletePictureTag(id);
+            return;
+        }
 
         throw new RuntimeException();
     }
@@ -86,6 +90,11 @@ public class SoftDeleteService {
     private void softDeleteComment(Long id) {
         Comment comment = commentRepository.findById(id).orElseThrow(RuntimeException::new);
         comment.softDelete();
+    }
+
+    private void softDeletePictureTag(Long id) {
+        PictureTag pictureTag = pictureTagRepository.findById(id).orElseThrow(RuntimeException::new);
+        pictureTag.softDelete();
     }
 
 }

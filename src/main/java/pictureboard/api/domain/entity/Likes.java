@@ -28,26 +28,12 @@ public class Likes extends BaseTime {
     @JoinColumn(name = "picture_id")
     private Picture picture;
 
-    @Enumerated(EnumType.STRING)
-    private OnClickStatus onClickStatus;
-
     protected Likes() {
     }
 
     //creatLikes
-    public Likes(Account account, Picture picture, OnClickStatus onClickStatus) {
+    public Likes(Account account, Picture picture) {
         this.account = account;
         this.picture = picture;
-        this.onClickStatus = onClickStatus;
-    }
-
-    public void switchStatus() {
-        if (onClickStatus == OnClickStatus.OFF) {
-            onClickStatus = OnClickStatus.ON;
-            picture.addLikeCount();
-        } else {
-            onClickStatus = OnClickStatus.OFF;
-            picture.removeLikeCount();
-        }
     }
 }

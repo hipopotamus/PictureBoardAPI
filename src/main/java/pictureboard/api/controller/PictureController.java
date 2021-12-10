@@ -13,7 +13,8 @@ import pictureboard.api.argumentresolver.LoginAccount;
 import pictureboard.api.domain.entity.Picture;
 import pictureboard.api.dto.PictureDto;
 import pictureboard.api.dto.Result;
-import pictureboard.api.form.CreatePictureForm;
+import pictureboard.api.form.PictureDescriptionForm;
+import pictureboard.api.form.PictureForm;
 import pictureboard.api.form.PictureSearchCond;
 import pictureboard.api.form.PictureTagForm;
 import pictureboard.api.service.PictureService;
@@ -35,38 +36,39 @@ public class PictureController {
     @ApiOperation(value = "사진 생성", notes = "'사진 정보'를 받아 새로운 사진을 생성합니다.")
     @PostMapping("/picture/create")
     public Object createPicture(@ApiIgnore @LoginAccount Long loginAccountId,
-                                @Valid @ModelAttribute CreatePictureForm createPictureForm,
+                                @Valid @ModelAttribute PictureForm pictureForm,
                                 @ApiIgnore Errors errors) throws IOException {
 
         if (errors.hasErrors()) {
             return errors.getAllErrors();
         }
 
-        Picture picture = pictureService.createPicture(createPictureForm.getTitle(), createPictureForm.getDescription(),
-                createPictureForm.getPictureFile(), createPictureForm.getPictureType(), loginAccountId,
-                createPictureForm.getTagTitles());
+        Picture picture = pictureService.createPicture(pictureForm.getTitle(), pictureForm.getDescription(),
+                pictureForm.getPictureFile(), pictureForm.getPictureType(), loginAccountId,
+                pictureForm.getTagTitles());
 
         return pictureService.makePictureDtoById(picture.getId());
     }
 
     @ApiOperation(value = "사진 내용 수정", notes = "'변경할 사진의 아이디'와 '내용'을 받아 사진의 내용을 수정합니다.")
-    @PostMapping("/picture/description/{pictureId}")
+    @PostMapping("/picture/description")
     public PictureDto updateDescription(@ApiIgnore @LoginAccount Long loginAccountId,
-                                        @PathVariable("pictureId") Long pictureId, String description) {
-        return pictureService.updateDescription(loginAccountId, pictureId, description);
+                                        @RequestBody PictureDescriptionForm pictureDescriptionForm) {
+        return pictureService.updateDescription(loginAccountId, pictureDescriptionForm.getId(),
+                pictureDescriptionForm.getDescription());
     }
 
     @ApiOperation(value = "사진 태그 추가", notes = "'사진의 아이디'와 '하나 이상의 태그'를 받아 사진에 추가합니다.")
-    @PostMapping("/picture/tag/update")
+    @PostMapping("/picture/tag")
     public PictureDto updatePictureTags(@RequestBody PictureTagForm pictureTagForm) {
         pictureTagService.createPictureTags(pictureTagForm.getId(), pictureTagForm.getTagTitles());
         return pictureService.makePictureDtoById(pictureTagForm.getId());
     }
 
     @ApiOperation(value = "사진 태그 삭제", notes = "'사진의 아이디'와 '하나 이상의 태그'를 받고 사진에서 해당 태그들을 삭제합니다.")
-    @PostMapping("/picture/tag/delete")
+    @DeleteMapping("/picture/tag")
     public String deletePictureTags(@RequestBody PictureTagForm pictureTagForm) {
-        pictureTagService.deletePictureTag(pictureTagForm.getId(), pictureTagForm.getTagTitles());
+        pictureTagService.deletePictureTags(pictureTagForm.getId(), pictureTagForm.getTagTitles());
         return "delete pictureTags success";
     }
 
@@ -130,6 +132,7 @@ public class PictureController {
         return result;
     }
 
+    @ApiOperation(value = "사진 삭제", notes = "'사진 아이디'를 받아 해당 사진을 삭제 합니다.")
     @DeleteMapping("/picture/{pictureId}")
     public String deletePicture(@PathVariable("pictureId") Long pictureId) {
         pictureService.deletePicture(pictureId);

@@ -26,6 +26,6 @@ public class LoginController {
     public String login(@RequestBody UsernamePasswordForm usernamePasswordForm, HttpServletResponse response) {
         String jwtToken = authService.login(usernamePasswordForm);
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
-        return "yes";
+        return "login success";
     }
 }

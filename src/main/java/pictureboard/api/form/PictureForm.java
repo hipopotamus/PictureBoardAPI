@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Data
-public class CreatePictureForm {
+public class PictureForm {
 
     @NotEmpty
     private String title;

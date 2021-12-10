@@ -76,21 +76,21 @@ public class TestInit {
             for (int i = 4; i < 30; i++) {
                 Account account = accountService.findByNickname("nickname" + i);
                 for (int j = 0; j < 45; j++) {
-                    likesService.onClick(account.getId(), pictures.get(random.nextInt(90)).getId());
+                    likesService.makeLikes(account.getId(), pictures.get(random.nextInt(90)).getId());
                 }
             }
 
             for (int i = 0; i < 45; i++) {
-                likesService.onClick(account1.getId(), pictures.get(random.nextInt(55) + 31).getId());
+                likesService.makeLikes(account1.getId(), pictures.get(random.nextInt(55) + 31).getId());
             }
 
             //follow 생성
-            followService.onClick(account1.getId(), account2.getId());
-            followService.onClick(account1.getId(), account3.getId());
-            followService.onClick(account2.getId(), account1.getId());
-            followService.onClick(account2.getId(), account3.getId());
-            followService.onClick(account3.getId(), account1.getId());
-            followService.onClick(account3.getId(), account2.getId());
+            followService.makeFollow(account1.getId(), account2.getId());
+            followService.makeFollow(account1.getId(), account3.getId());
+            followService.makeFollow(account2.getId(), account1.getId());
+            followService.makeFollow(account2.getId(), account3.getId());
+            followService.makeFollow(account3.getId(), account1.getId());
+            followService.makeFollow(account3.getId(), account2.getId());
 
             for (int i = 4; i < 30; i++) {
                 Account account = accountService.findByNickname("nickname" + i);
@@ -100,7 +100,7 @@ public class TestInit {
                     if (account.getId().equals(byNickname.getId())) {
                         continue;
                     }
-                    followService.onClick(account.getId(), byNickname.getId());
+                    followService.makeFollow(account.getId(), byNickname.getId());
                 }
             }
 

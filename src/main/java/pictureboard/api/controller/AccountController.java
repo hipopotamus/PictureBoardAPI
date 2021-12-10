@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +15,11 @@ import pictureboard.api.argumentresolver.LoginAccount;
 import pictureboard.api.domain.entity.Account;
 import pictureboard.api.dto.AccountDto;
 import pictureboard.api.dto.Result;
-import pictureboard.api.form.SignUpForm;
-import pictureboard.api.form.UsernamePasswordForm;
+import pictureboard.api.form.AccountForm;
 import pictureboard.api.service.AccountService;
-import pictureboard.api.service.AuthService;
 import pictureboard.api.validator.SignUpFormValidator;
-import pictureboard.api.variable.JwtProperties;
 import springfox.documentation.annotations.ApiIgnore;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
@@ -36,7 +31,6 @@ public class AccountController {
 
     private final AccountService accountService;
     private final SignUpFormValidator signUpFormValidator;
-    private final AuthService authService;
 
     @InitBinder("signUpForm")
     public void initBinder(WebDataBinder webDataBinder) {
@@ -45,14 +39,14 @@ public class AccountController {
 
     @ApiOperation(value = "회원 가입", notes = "회원 정보를 받아 새로운 회원을 생성합니다.")
     @PostMapping("/account")
-    public Object signUp(@Valid @ModelAttribute SignUpForm signUpForm, @ApiIgnore Errors errors) throws IOException {
+    public Object signUp(@Valid @ModelAttribute AccountForm accountForm, @ApiIgnore Errors errors) throws IOException {
 
         if (errors.hasErrors()) {
             return errors.getAllErrors();
         }
 
-        Account account = accountService.joinAccount(signUpForm.getUsername(), signUpForm.getPassword(), signUpForm.getNickname(),
-                signUpForm.getProfileFile(), signUpForm.getGender(), signUpForm.getBirthDate());
+        Account account = accountService.joinAccount(accountForm.getUsername(), accountForm.getPassword(), accountForm.getNickname(),
+                accountForm.getProfileFile(), accountForm.getGender(), accountForm.getBirthDate());
 
         return accountService.makeAccountDtoByAccount(account);
     }
@@ -110,7 +104,7 @@ public class AccountController {
         return result;
     }
 
-    @PostMapping("account/{accountId}")
+    @DeleteMapping("account/{accountId}")
     public void deleteAccount(@PathVariable("accountId") Long accountId) {
         accountService.deleteAccount(accountId);
     }

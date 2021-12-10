@@ -28,28 +28,11 @@ public class Follow extends BaseTime {
     @JoinColumn(name = "passiveAccount_id")
     private Account passiveAccount;
 
-
-    @Enumerated(EnumType.STRING)
-    private OnClickStatus onClickStatus;
-
     protected Follow() {
     }
 
-    public Follow(Account activeAccount, Account passiveAccount, OnClickStatus onClickStatus) {
+    public Follow(Account activeAccount, Account passiveAccount) {
         this.activeAccount = activeAccount;
         this.passiveAccount = passiveAccount;
-        this.onClickStatus = onClickStatus;
-    }
-
-    public void switchStatus() {
-        if (onClickStatus == OnClickStatus.OFF) {
-            onClickStatus = OnClickStatus.ON;
-            activeAccount.addActiveFollowCount();
-            passiveAccount.addPassiveFollowCount();
-        } else {
-            onClickStatus = OnClickStatus.OFF;
-            activeAccount.removeActiveFollowCount();
-            passiveAccount.removePassiveFollowCount();
-        }
     }
 }

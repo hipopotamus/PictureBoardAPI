@@ -21,16 +21,36 @@ public class LikesService {
     private final PictureRepository pictureRepository;
 
     @Transactional
-    public void onClick(Long loginAccountId, Long pictureId) {
-        Account loginAccount = accountRepository.findById(loginAccountId).orElse(null);
-        Picture picture = pictureRepository.findById(pictureId).orElse(null);
-        Likes likes = likesRepository.findByMemberAndPicture(loginAccount, picture);
+    public void makeLikes(Long accountId, Long pictureId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(RuntimeException::new);
+        Picture picture = pictureRepository.findById(pictureId).orElseThrow(RuntimeException::new);
+        Likes likes = likesRepository.findByMemberAndPicture(account, picture);
+
+        if (accountId.equals(picture.getAccount().getId())) {
+            throw new RuntimeException("don't likes myself");
+        }
 
         if (likes == null) {
-            likesRepository.save(new Likes(loginAccount, picture, OnClickStatus.ON));
+            likesRepository.save(new Likes(account, picture));
             picture.addLikeCount();
-        } else {
-            likes.switchStatus();
         }
+    }
+
+    @Transactional
+    public void deleteLikes(Long accountId, Long pictureId) {
+        Account account = accountRepository.findById(accountId).orElseThrow(RuntimeException::new);
+        Picture picture = pictureRepository.findById(pictureId).orElseThrow(RuntimeException::new);
+        Likes likes = likesRepository.findByMemberAndPicture(account, picture);
+
+        if (accountId.equals(picture.getAccount().getId())) {
+            throw new RuntimeException("don't unlikes myself");
+        }
+
+        if (likes == null) {
+            throw new RuntimeException("there isn't likes");
+        }
+
+        likes.softDelete();
+        picture.removeLikeCount();
     }
 }

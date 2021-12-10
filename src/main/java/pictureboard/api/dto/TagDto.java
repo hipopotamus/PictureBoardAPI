@@ -8,4 +8,6 @@ public class TagDto {
     private Long id;
 
     private String title;
+
+    private int relatedPictureCount;
 }

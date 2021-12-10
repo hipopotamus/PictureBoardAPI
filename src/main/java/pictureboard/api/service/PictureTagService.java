@@ -10,7 +10,6 @@ import pictureboard.api.repository.PictureRepository;
 import pictureboard.api.repository.PictureTagRepository;
 import pictureboard.api.repository.TagRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -22,12 +21,12 @@ public class PictureTagService {
     private final TagRepository tagRepository;
     private final PictureTagRepository pictureTagRepository;
     private final TagService tagService;
+    private final SoftDeleteService softDeleteService;
 
     @Transactional
     public void createPictureTag(Picture picture, Tag tag) {
         PictureTag pictureTag = pictureTagRepository.save(new PictureTag(picture, tag));
         tag.addRelatedPictureCount();
-        pictureTag.changePicture(picture);
     }
 
     @Transactional
@@ -44,13 +43,13 @@ public class PictureTagService {
     }
 
     @Transactional
-    public void deletePictureTag(Long pictureId, List<String> tagTitles) {
+    public void deletePictureTags(Long pictureId, List<String> tagTitles) {
         Picture picture = pictureRepository.findById(pictureId).orElseThrow(RuntimeException::new);
 
         for (String tagTitle : tagTitles) {
             Tag tag = tagRepository.findByTitle(tagTitle);
             PictureTag pictureTag = pictureTagRepository.findByPictureAndTag(picture, tag);
-            pictureTagRepository.delete(pictureTag);
+            pictureTag.softDelete();
             tag.removeRelatedPictureCount();
         }
     }

@@ -16,11 +16,17 @@ public class LikesController {
 
     private final LikesService likesService;
 
-    @ApiOperation(value = "likes 상태 변환", notes = "사진 아이디를 받습니다.\n" +
-            "해당 API를 호출하는 것으로 로그인한 회원과 특정 사진과의 좋아요 상태를 활성화 또는 비활성화 할 수 있습니다.")
+    @ApiOperation(value = "좋아요 생성", notes = "사진의 아이디를 받아 로그인 회원과 해당 사진간 좋아요 관계를 생성합니다.")
     @PostMapping("/likes/{pictureId}")
-    public String clickLikes(@ApiIgnore @LoginAccount Long loginAccountId, @PathVariable Long pictureId) {
-        likesService.onClick(loginAccountId, pictureId);
-        return "clickLikes Success";
+    public String makeLikes(@ApiIgnore @LoginAccount Long accountId, @PathVariable Long pictureId) {
+        likesService.makeLikes(accountId, pictureId);
+        return "create likes success";
+    }
+
+    @ApiOperation(value = "좋아요 삭제", notes = "사진의 아이디를 받아 로그인 회원과 해당 사진간의 좋아요 관계를 삭제합니다.")
+    @DeleteMapping("/likes/{pictureId}")
+    public String deleteLikes(@ApiIgnore @LoginAccount Long accountId, @PathVariable Long pictureId) {
+        likesService.deleteLikes(accountId, pictureId);
+        return "delete likes success";
     }
 }

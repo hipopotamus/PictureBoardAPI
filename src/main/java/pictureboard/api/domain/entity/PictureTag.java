@@ -34,10 +34,6 @@ public class PictureTag extends BaseTime {
     public PictureTag(Picture picture, Tag tag) {
         this.picture = picture;
         this.tag = tag;
-    }
-
-    public void changePicture(Picture picture) {
-        this.picture = picture;
         picture.getPictureTags().add(this);
     }
 }

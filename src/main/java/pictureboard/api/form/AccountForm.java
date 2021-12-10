@@ -12,7 +12,7 @@ import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Data
-public class SignUpForm {
+public class AccountForm {
 
     @NotEmpty
     @Length(min = 4, max = 20)

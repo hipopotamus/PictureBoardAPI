@@ -3,13 +3,12 @@ package pictureboard.api.form;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Data
-public class PictureTagForm {
+public class PictureDescriptionForm {
 
     @NotNull
     private Long id;
 
-    private List<String> tagTitles;
+    private String description;
 }
