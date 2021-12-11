@@ -14,7 +14,7 @@ import pictureboard.api.domain.constant.Gender;
 import pictureboard.api.domain.entity.Account;
 import pictureboard.api.dto.AccountDto;
 import pictureboard.api.exception.NotFoundSourceException;
-import pictureboard.api.repository.AccountRepository;
+import pictureboard.api.repository.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -27,6 +27,11 @@ import java.util.stream.Collectors;
 public class AccountService {
 
     private final AccountRepository accountRepository;
+    private final PictureRepository pictureRepository;
+    private final LikesRepository likesRepository;
+    private final FollowRepository followRepository;
+    private final CommentRepository commentRepository;
+    private final PictureTagRepository pictureTagRepository;
     private final FileService fileService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
@@ -125,5 +130,18 @@ public class AccountService {
 
     @Transactional
     public void deleteAccount(Long accountId) {
+        try {
+            likesRepository.deleteByAccount(accountId);
+            followRepository.deleteByAccount(accountId);
+            commentRepository.deleteByAccount(accountId);
+            pictureTagRepository.deleteByAccount(accountId);
+            pictureRepository.deleteByAccount(accountId);
+        } catch (Exception e) {
+            throw new NotFoundSourceException("계정과 연관된 자원을 삭제할 수 없습니다.");
+        }
+
+        Account account = findById(accountId);
+        account.softDelete();
+
     }
 }

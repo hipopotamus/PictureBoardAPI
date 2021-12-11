@@ -151,9 +151,4 @@ public class PictureController {
         pictureService.deletePicture(pictureId);
         return "delete picture success";
     }
-
-    @DeleteMapping("/picture/delete/{pictureId}")
-    public void hardDelete(@PathVariable Long pictureId) {
-        pictureService.hardDelete(pictureId);
-    }
 }

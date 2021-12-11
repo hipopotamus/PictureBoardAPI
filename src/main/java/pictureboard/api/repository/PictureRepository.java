@@ -1,6 +1,7 @@
 package pictureboard.api.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import pictureboard.api.domain.entity.Account;
@@ -26,5 +27,9 @@ public interface PictureRepository extends JpaRepository<Picture, Long>, Picture
             "join fetch pt.tag t " +
             "where a.id = :accountId")
     List<Picture> findByAccountLikes(@Param("accountId") Long accountId);
+
+    @Modifying
+    @Query("update Picture p set p.deleted = true where p.account.id =:accountId")
+    void deleteByAccount(@Param("accountId") Long accountId);
 
 }

@@ -120,9 +120,4 @@ public class AccountController {
     public void deleteAccount(@PathVariable("accountId") Long accountId) {
         accountService.deleteAccount(accountId);
     }
-
-    @DeleteMapping("account/delete/{accountId}")
-    public void deletehardAccount(@PathVariable Long accountId) {
-        accountService.hardDeleteAccount(accountId);
-    }
 }
