@@ -55,8 +55,7 @@ public class ExceptionControllerAdvice {
 
         for (String code : codes) {
             try {
-                String message = messageSource.getMessage(code, null, Locale.KOREA);
-                return message;
+                return messageSource.getMessage(code, null, Locale.KOREA);
             } catch (Exception e) {
                 continue;
             }
