@@ -28,7 +28,6 @@ public class AccountService {
 
     private final AccountRepository accountRepository;
     private final FileService fileService;
-    private final SoftDeleteService softDeleteService;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final ModelMapper modelMapper;
 
@@ -126,11 +125,5 @@ public class AccountService {
 
     @Transactional
     public void deleteAccount(Long accountId) {
-        softDeleteService.softDelete(accountId, Account.class);
-    }
-
-    @Transactional
-    public void hardDeleteAccount(Long accountId) {
-        accountRepository.deleteById(accountId);
     }
 }

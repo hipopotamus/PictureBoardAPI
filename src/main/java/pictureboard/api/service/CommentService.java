@@ -25,7 +25,6 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PictureRepository pictureRepository;
     private final AccountRepository accountRepository;
-    private final SoftDeleteService softDeleteService;
     private final ModelMapper modelMapper;
 
     @Transactional
@@ -46,7 +45,6 @@ public class CommentService {
 
     @Transactional
     public void deleteComment(Long commentId) {
-        softDeleteService.softDelete(commentId, Comment.class);
     }
 
     public List<CommentDto> findComment(Long pictureId) {
