@@ -30,6 +30,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.
@@ -43,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
                 .addFilter(new JwtAuthorizationFilter(authenticationManager(), accountRepository))
                 .authorizeRequests()
-                .mvcMatchers("/", "/sign", "/login", "/myLogin","/swagger-ui.html", "/webjars/**",
+                .mvcMatchers("/", "/account", "/login", "/myLogin","/swagger-ui.html", "/webjars/**",
                         "/v2/**", "/swagger-resources/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/picture/**").permitAll()
                 .anyRequest().authenticated()
@@ -54,11 +60,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public void configure(WebSecurity web) throws Exception {
         web.ignoring()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations());
-    }
-
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
     }
 }

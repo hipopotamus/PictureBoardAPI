@@ -9,6 +9,7 @@ import pictureboard.api.domain.entity.Comment;
 import pictureboard.api.domain.entity.Picture;
 import pictureboard.api.dto.AccountDto;
 import pictureboard.api.dto.CommentDto;
+import pictureboard.api.exception.NotFoundSourceException;
 import pictureboard.api.repository.AccountRepository;
 import pictureboard.api.repository.CommentRepository;
 import pictureboard.api.repository.PictureRepository;
@@ -24,12 +25,15 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final PictureRepository pictureRepository;
     private final AccountRepository accountRepository;
+    private final SoftDeleteService softDeleteService;
     private final ModelMapper modelMapper;
 
     @Transactional
     public Comment createComment(Long pictureId, Long accountId, String content) {
-        Picture picture = pictureRepository.findById(pictureId).orElseThrow(RuntimeException::new);
-        Account account = accountRepository.findById(accountId).orElseThrow(RuntimeException::new);
+        Picture picture = pictureRepository.findById(pictureId)
+                .orElseThrow(() -> new NotFoundSourceException("사진을 찾을 수 없습니다."));
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(() -> new NotFoundSourceException("계정을 찾을 수 없습니다."));
         return commentRepository.save(new Comment(picture, account, content));
     }
 
@@ -38,6 +42,11 @@ public class CommentService {
         AccountDto accountDto = modelMapper.map(comment.getAccount(), AccountDto.class);
         commentDto.setAccountDto(accountDto);
         return commentDto;
+    }
+
+    @Transactional
+    public void deleteComment(Long commentId) {
+        softDeleteService.softDelete(commentId, Comment.class);
     }
 
     public List<CommentDto> findComment(Long pictureId) {

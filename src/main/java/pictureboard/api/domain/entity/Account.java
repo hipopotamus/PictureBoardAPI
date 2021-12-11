@@ -2,7 +2,6 @@ package pictureboard.api.domain.entity;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import pictureboard.api.domain.BaseTime;
 import pictureboard.api.domain.Img;
@@ -44,8 +43,6 @@ public class Account extends BaseTime {
     private int activeFollowCount = 0;
 
     private int passiveFollowCount = 0;
-
-
 
     protected Account() {
     }

@@ -5,7 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pictureboard.api.domain.entity.Account;
 import pictureboard.api.domain.entity.Follow;
-import pictureboard.api.domain.constant.OnClickStatus;
+import pictureboard.api.exception.SelfRelateException;
+import pictureboard.api.exception.NotFoundSourceException;
 import pictureboard.api.repository.AccountRepository;
 import pictureboard.api.repository.FollowRepository;
 
@@ -20,11 +21,13 @@ public class FollowService {
     @Transactional
     public void makeFollow(Long activeFollowId, Long passiveFollowId) {
         if (activeFollowId.equals(passiveFollowId)) {
-            throw new RuntimeException("don't follow myself");
+            throw new SelfRelateException("자기 자신을 팔로우할 수 없습니다.");
         }
-        Account activeFollowAccount = accountRepository.findById(activeFollowId).orElseThrow(RuntimeException::new);
-        Account passiveFollowAccount = accountRepository.findById(passiveFollowId).orElseThrow(RuntimeException::new);
-        Follow follow = followRepository.findByActiveFollowAccountAndPassiveFollowAccount(activeFollowAccount, passiveFollowAccount);
+        Account activeFollowAccount = accountRepository.findById(activeFollowId)
+                .orElseThrow(() -> new NotFoundSourceException("activeFollow 계정을 찾을 수 없습니다."));
+        Account passiveFollowAccount = accountRepository.findById(passiveFollowId)
+                .orElseThrow(() -> new NotFoundSourceException("passiveFollow 사진을 찾을 수 없습니다."));
+        Follow follow = followRepository.findByActiveAndPassive(activeFollowId, passiveFollowId);
 
         if (follow == null) {
             followRepository.save(new Follow(activeFollowAccount, passiveFollowAccount));
@@ -36,15 +39,17 @@ public class FollowService {
     @Transactional
     public void deleteFollow(Long activeFollowId, Long passiveFollowId) {
         if (activeFollowId.equals(passiveFollowId)) {
-            throw new RuntimeException("don't unfollow myself");
+            throw new SelfRelateException("자기 자신을 언팔로우할 수 없습니다.");
         }
 
-        Account activeFollowAccount = accountRepository.findById(activeFollowId).orElseThrow(RuntimeException::new);
-        Account passiveFollowAccount = accountRepository.findById(passiveFollowId).orElseThrow(RuntimeException::new);
-        Follow follow = followRepository.findByActiveFollowAccountAndPassiveFollowAccount(activeFollowAccount, passiveFollowAccount);
+        Account activeFollowAccount = accountRepository.findById(activeFollowId)
+                .orElseThrow(() -> new NotFoundSourceException("activeFollow 계정을 찾을 수 없습니다."));
+        Account passiveFollowAccount = accountRepository.findById(passiveFollowId)
+                .orElseThrow(() -> new NotFoundSourceException("passiveFollow 사진을 찾을 수 없습니다."));
+        Follow follow = followRepository.findByActiveAndPassive(activeFollowId, passiveFollowId);
 
         if (follow == null) {
-            throw new RuntimeException("don't unfollow them");
+            throw new NotFoundSourceException("팔로우 관계를 찾을 수 없습니다.");
         }
 
         follow.softDelete();

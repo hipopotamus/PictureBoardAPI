@@ -15,9 +15,12 @@ import pictureboard.api.argumentresolver.LoginAccount;
 import pictureboard.api.domain.entity.Account;
 import pictureboard.api.dto.AccountDto;
 import pictureboard.api.dto.Result;
+import pictureboard.api.exception.IllegalFormException;
 import pictureboard.api.form.AccountForm;
+import pictureboard.api.form.AccountNicknameForm;
+import pictureboard.api.form.AccountProfileForm;
 import pictureboard.api.service.AccountService;
-import pictureboard.api.validator.SignUpFormValidator;
+import pictureboard.api.validator.AccountFormValidator;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
@@ -30,11 +33,11 @@ import java.util.List;
 public class AccountController {
 
     private final AccountService accountService;
-    private final SignUpFormValidator signUpFormValidator;
+    private final AccountFormValidator accountFormValidator;
 
-    @InitBinder("signUpForm")
+    @InitBinder("accountForm")
     public void initBinder(WebDataBinder webDataBinder) {
-        webDataBinder.addValidators(signUpFormValidator);
+        webDataBinder.addValidators(accountFormValidator);
     }
 
     @ApiOperation(value = "회원 가입", notes = "회원 정보를 받아 새로운 회원을 생성합니다.")
@@ -42,7 +45,7 @@ public class AccountController {
     public Object signUp(@Valid @ModelAttribute AccountForm accountForm, @ApiIgnore Errors errors) throws IOException {
 
         if (errors.hasErrors()) {
-            return errors.getAllErrors();
+            throw new IllegalFormException(errors);
         }
 
         Account account = accountService.joinAccount(accountForm.getUsername(), accountForm.getPassword(), accountForm.getNickname(),
@@ -53,15 +56,24 @@ public class AccountController {
 
     @ApiOperation(value = "내 닉네임 수정", notes = "변경할 닉네임을 받아 회원의 닉네임을 수정합니다.")
     @PostMapping("/account/nickname")
-    public AccountDto updateNickname(@ApiIgnore @LoginAccount Long loginAccountId, @RequestParam String nickname) {
-        return accountService.updateNickname(loginAccountId, nickname);
+    public AccountDto updateNickname(@ApiIgnore @LoginAccount Long loginAccountId,
+                                     @Valid @RequestBody AccountNicknameForm accountNicknameForm,
+                                     @ApiIgnore Errors errors) {
+        if (errors.hasErrors()) {
+            throw new IllegalFormException(errors);
+        }
+        return accountService.updateNickname(loginAccountId, accountNicknameForm.getNickname());
     }
 
     @ApiOperation(value = "내 프로필 이미지 수정", notes = "변경할 프로필 이미지를 받아 회원의 프로필 이미지를 수정합니다.")
     @PostMapping("/account/profileImg")
     public AccountDto updateProfileImg(@ApiIgnore @LoginAccount Long loginAccountId,
-                                       @RequestParam MultipartFile profileFile) throws IOException {
-        return accountService.updateProfileImg(loginAccountId, profileFile);
+                                       @Valid @RequestBody AccountProfileForm accountProfileForm,
+                                       @ApiIgnore Errors errors) throws IOException {
+        if (errors.hasErrors()) {
+            throw new IllegalFormException(errors);
+        }
+        return accountService.updateProfileImg(loginAccountId, accountProfileForm.getProfileFile());
     }
 
     @ApiOperation(value = "로그인 회원 정보 조회", notes = "현재 로그인한 회원의 정보를 조회합니다.")
@@ -107,5 +119,10 @@ public class AccountController {
     @DeleteMapping("account/{accountId}")
     public void deleteAccount(@PathVariable("accountId") Long accountId) {
         accountService.deleteAccount(accountId);
+    }
+
+    @DeleteMapping("account/delete/{accountId}")
+    public void deletehardAccount(@PathVariable Long accountId) {
+        accountService.hardDeleteAccount(accountId);
     }
 }

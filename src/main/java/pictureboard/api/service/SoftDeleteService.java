@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pictureboard.api.domain.BaseTime;
 import pictureboard.api.domain.entity.*;
+import pictureboard.api.exception.NotFoundSourceException;
 import pictureboard.api.repository.*;
 
 import java.util.List;
@@ -51,7 +52,8 @@ public class SoftDeleteService {
     }
 
     private void softDeleteAccount(Long id) {
-        Account account = accountRepository.findById(id).orElseThrow(RuntimeException::new);
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new NotFoundSourceException("계정을 찾을 수 없습니다."));
 
         List<Follow> follows = followRepository.findByAccountId(account.getId());
         List<Likes> likesList = likesRepository.findByAccountId(account.getId());
@@ -65,7 +67,8 @@ public class SoftDeleteService {
     }
 
     private void softDeletePicture(Long id) {
-        Picture picture = pictureRepository.findById(id).orElseThrow(RuntimeException::new);
+        Picture picture = pictureRepository.findById(id)
+                .orElseThrow(() -> new NotFoundSourceException("사진을 찾을 수 없습니다."));
 
         List<Comment> comments = commentRepository.findByPictureId(picture.getId());
         List<Likes> likesList = likesRepository.findByPictureId(picture.getId());
@@ -78,22 +81,26 @@ public class SoftDeleteService {
     }
 
     private void softDeleteFollow(Long id) {
-        Follow follow = followRepository.findById(id).orElseThrow(RuntimeException::new);
+        Follow follow = followRepository.findById(id)
+                .orElseThrow(() -> new NotFoundSourceException("팔로우 관계를 찾을 수 없습니다."));
         follow.softDelete();
     }
 
     private void softDeleteLikes(Long id) {
-        Likes likes = likesRepository.findById(id).orElseThrow(RuntimeException::new);
+        Likes likes = likesRepository.findById(id)
+                .orElseThrow(() -> new NotFoundSourceException("좋아요 관계를 찾을 수 없습니다."));
         likes.softDelete();
     }
 
     private void softDeleteComment(Long id) {
-        Comment comment = commentRepository.findById(id).orElseThrow(RuntimeException::new);
+        Comment comment = commentRepository.findById(id)
+                .orElseThrow(() -> new NotFoundSourceException("댓글을 찾을 수 없습니다."));
         comment.softDelete();
     }
 
     private void softDeletePictureTag(Long id) {
-        PictureTag pictureTag = pictureTagRepository.findById(id).orElseThrow(RuntimeException::new);
+        PictureTag pictureTag = pictureTagRepository.findById(id)
+                .orElseThrow(() -> new NotFoundSourceException("사진의 태그를 찾을 수 없습니다."));
         pictureTag.softDelete();
     }
 

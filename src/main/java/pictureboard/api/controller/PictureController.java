@@ -13,6 +13,7 @@ import pictureboard.api.argumentresolver.LoginAccount;
 import pictureboard.api.domain.entity.Picture;
 import pictureboard.api.dto.PictureDto;
 import pictureboard.api.dto.Result;
+import pictureboard.api.exception.IllegalFormException;
 import pictureboard.api.form.PictureDescriptionForm;
 import pictureboard.api.form.PictureForm;
 import pictureboard.api.form.PictureSearchCond;
@@ -53,21 +54,33 @@ public class PictureController {
     @ApiOperation(value = "사진 내용 수정", notes = "'변경할 사진의 아이디'와 '내용'을 받아 사진의 내용을 수정합니다.")
     @PostMapping("/picture/description")
     public PictureDto updateDescription(@ApiIgnore @LoginAccount Long loginAccountId,
-                                        @RequestBody PictureDescriptionForm pictureDescriptionForm) {
+                                        @Valid @RequestBody PictureDescriptionForm pictureDescriptionForm,
+                                        @ApiIgnore Errors errors) {
+        if (errors.hasErrors()) {
+            throw new IllegalFormException(errors);
+        }
         return pictureService.updateDescription(loginAccountId, pictureDescriptionForm.getId(),
                 pictureDescriptionForm.getDescription());
     }
 
     @ApiOperation(value = "사진 태그 추가", notes = "'사진의 아이디'와 '하나 이상의 태그'를 받아 사진에 추가합니다.")
     @PostMapping("/picture/tag")
-    public PictureDto updatePictureTags(@RequestBody PictureTagForm pictureTagForm) {
+    public PictureDto updatePictureTags(@Valid @RequestBody PictureTagForm pictureTagForm,
+                                        @ApiIgnore Errors errors) {
+        if (errors.hasErrors()) {
+            throw new IllegalFormException(errors);
+        }
         pictureTagService.createPictureTags(pictureTagForm.getId(), pictureTagForm.getTagTitles());
         return pictureService.makePictureDtoById(pictureTagForm.getId());
     }
 
     @ApiOperation(value = "사진 태그 삭제", notes = "'사진의 아이디'와 '하나 이상의 태그'를 받고 사진에서 해당 태그들을 삭제합니다.")
     @DeleteMapping("/picture/tag")
-    public String deletePictureTags(@RequestBody PictureTagForm pictureTagForm) {
+    public String deletePictureTags(@Valid @RequestBody PictureTagForm pictureTagForm,
+                                    @ApiIgnore Errors errors) {
+        if (errors.hasErrors()) {
+            throw new IllegalFormException(errors);
+        }
         pictureTagService.deletePictureTags(pictureTagForm.getId(), pictureTagForm.getTagTitles());
         return "delete pictureTags success";
     }
@@ -137,5 +150,10 @@ public class PictureController {
     public String deletePicture(@PathVariable("pictureId") Long pictureId) {
         pictureService.deletePicture(pictureId);
         return "delete picture success";
+    }
+
+    @DeleteMapping("/picture/delete/{pictureId}")
+    public void hardDelete(@PathVariable Long pictureId) {
+        pictureService.hardDelete(pictureId);
     }
 }

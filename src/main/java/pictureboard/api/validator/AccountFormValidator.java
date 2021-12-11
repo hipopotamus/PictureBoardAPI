@@ -9,7 +9,7 @@ import pictureboard.api.service.AccountService;
 
 @Component
 @RequiredArgsConstructor
-public class SignUpFormValidator implements Validator {
+public class AccountFormValidator implements Validator {
 
     private final AccountService accountService;
 

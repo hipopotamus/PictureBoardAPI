@@ -16,6 +16,9 @@ import pictureboard.api.domain.entity.Picture;
 import pictureboard.api.domain.constant.PictureType;
 import pictureboard.api.dto.AccountDto;
 import pictureboard.api.dto.PictureDto;
+import pictureboard.api.exception.AuthException;
+import pictureboard.api.exception.NotFoundSourceException;
+import pictureboard.api.exception.SelfRelateException;
 import pictureboard.api.form.PictureSearchCond;
 import pictureboard.api.repository.AccountRepository;
 import pictureboard.api.repository.PictureRepository;
@@ -42,7 +45,8 @@ public class PictureService {
     @Transactional
     public Picture createPicture(String title, String description, MultipartFile pictureFile, PictureType pictureType,
                               Long loginAccountId, List<String> tagTitles) throws IOException {
-        Account account = accountRepository.findById(loginAccountId).orElse(null);
+        Account account = accountRepository.findById(loginAccountId)
+                .orElseThrow(() -> new NotFoundSourceException("사진을 찾을 수 없습니다."));
         Img pictureImg = fileService.storeFile(pictureFile, pictureImgPath);
 
 
@@ -55,7 +59,8 @@ public class PictureService {
     @Transactional
     public Picture createPictureTest(String title, String description, PictureType pictureType,
                                  Long loginAccountId, List<String> tagTitles) throws IOException {
-        Account account = accountRepository.findById(loginAccountId).orElse(null);
+        Account account = accountRepository.findById(loginAccountId)
+                .orElseThrow(() -> new NotFoundSourceException("사진을 찾을 수 없습니다."));
         Img pictureImg = new Img("testPicture", "testStorePicture", "testFullPath");
 
         Picture picture = pictureRepository.save(new Picture(title, description, pictureImg, pictureType, account));
@@ -65,14 +70,20 @@ public class PictureService {
     }
 
     public PictureDto makePictureDtoById(Long pictureId) {
-        Picture picture = pictureRepository.findPictureForDto(pictureId);
-        return makePictureDto(picture);
+        try {
+            Picture picture = pictureRepository.findPictureForDto(pictureId);
+            return makePictureDto(picture);
+        } catch (Exception e) {
+            throw new NotFoundSourceException("사진을 찾을 수 없습니다.");
+        }
     }
 
     public PictureDto makePictureDto(Picture picture) {
         PictureDto pictureDto = modelMapper.map(picture, PictureDto.class);
         AccountDto accountDto = modelMapper.map(picture.getAccount(), AccountDto.class);
-        List<String> tagTitles = picture.getPictureTags().stream().map(pt -> pt.getTag().getTitle()).collect(Collectors.toList());
+        List<String> tagTitles = picture.getPictureTags().stream()
+                .map(pt -> pt.getTag().getTitle())
+                .collect(Collectors.toList());
 
         pictureDto.setAccount(accountDto);
         pictureDto.setTagTitles(tagTitles);
@@ -118,9 +129,10 @@ public class PictureService {
 
     @Transactional
     public PictureDto updateDescription(Long loginAccountId, Long pictureId, String description) {
-        Picture picture = pictureRepository.findById(pictureId).orElse(null);
-        if (picture.getAccount().getId() != loginAccountId) {
-            throw new RuntimeException();
+        Picture picture = pictureRepository.findById(pictureId)
+                .orElseThrow(() -> new NotFoundSourceException("사진을 찾을 수 없습니다."));
+        if (!picture.getAccount().getId().equals(loginAccountId)) {
+            throw new AuthException("로그인 계정의 사진이 아닙니다.");
         }
         picture.updateDescription(description);
         return makePictureDto(picture);
@@ -140,5 +152,10 @@ public class PictureService {
     @Transactional
     public void deletePicture(Long pictureId) {
         softDeleteService.softDelete(pictureId, Picture.class);
+    }
+
+    @Transactional
+    public void hardDelete(Long pictureId) {
+        pictureRepository.deleteById(pictureId);
     }
 }

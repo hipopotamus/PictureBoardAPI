@@ -9,11 +9,12 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import pictureboard.api.dto.AccountDto;
-import pictureboard.api.repository.AccountRepository;
-import pictureboard.api.domain.entity.Account;
-import pictureboard.api.domain.constant.Gender;
 import pictureboard.api.domain.Img;
+import pictureboard.api.domain.constant.Gender;
+import pictureboard.api.domain.entity.Account;
+import pictureboard.api.dto.AccountDto;
+import pictureboard.api.exception.NotFoundSourceException;
+import pictureboard.api.repository.AccountRepository;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -53,7 +54,8 @@ public class AccountService {
     }
 
     public AccountDto makeAccountDtoById(Long loginAccountId) {
-        Account account = accountRepository.findById(loginAccountId).orElse(null);
+        Account account = accountRepository.findById(loginAccountId).
+                orElseThrow(() -> new NotFoundSourceException("계정을 찾을 수 없습니다."));
         return makeAccountDtoByAccount(account);
     }
 
@@ -67,14 +69,16 @@ public class AccountService {
 
     @Transactional
     public AccountDto updateNickname(Long accountId, String nickname) {
-        Account account = accountRepository.findById(accountId).orElse(null);
+        Account account = accountRepository.findById(accountId).
+                orElseThrow(() -> new NotFoundSourceException("계정을 찾을 수 없습니다."));
         account.updateNickname(nickname);
         return makeAccountDtoByAccount(account);
     }
 
     @Transactional
     public AccountDto updateProfileImg(Long accountId, MultipartFile profileFile) throws IOException {
-        Account account = accountRepository.findById(accountId).orElse(null);
+        Account account = accountRepository.findById(accountId).
+                orElseThrow(() -> new NotFoundSourceException("계정을 찾을 수 없습니다."));
         Img profileImg = fileService.storeFile(profileFile, profileImgPath);
         account.updateProfileImg(profileImg);
 
@@ -96,7 +100,8 @@ public class AccountService {
     }
 
     public Account findById(Long accountId) {
-        return accountRepository.findById(accountId).orElseThrow(NullPointerException::new);
+        return accountRepository.findById(accountId).
+                orElseThrow(() -> new NotFoundSourceException("계정을 찾을 수 없습니다."));
     }
 
     public boolean existByUsername(String username) {
@@ -108,7 +113,11 @@ public class AccountService {
     }
 
     public Account findByNickname(String nickname) {
-        return accountRepository.findByNickname(nickname);
+        try {
+            return accountRepository.findByNickname(nickname);
+        } catch (Exception e) {
+            throw new NotFoundSourceException("계정을 찾을 수 없습니다.");
+        }
     }
 
     public List<Account> findAll() {
@@ -118,5 +127,10 @@ public class AccountService {
     @Transactional
     public void deleteAccount(Long accountId) {
         softDeleteService.softDelete(accountId, Account.class);
+    }
+
+    @Transactional
+    public void hardDeleteAccount(Long accountId) {
+        accountRepository.deleteById(accountId);
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pictureboard.api.argumentresolver.LoginAccount;
-import pictureboard.api.dto.AccountDto;
 import pictureboard.api.service.AccountService;
 import pictureboard.api.service.FollowService;
 import springfox.documentation.annotations.ApiIgnore;

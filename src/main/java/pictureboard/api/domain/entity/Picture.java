@@ -42,12 +42,6 @@ public class Picture extends BaseBy {
     @OneToMany(mappedBy = "picture")
     private List<PictureTag> pictureTags = new ArrayList<>();
 
-//    @OneToMany(mappedBy = "picture")
-//    private List<Comment> comments = new ArrayList<>();
-//
-//    @OneToMany(mappedBy = "picture")
-//    private List<Likes> likesList = new ArrayList<>();
-
     protected Picture() {
     }
 
