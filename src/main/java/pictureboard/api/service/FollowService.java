@@ -27,7 +27,7 @@ public class FollowService {
                 .orElseThrow(() -> new NotFoundSourceException("activeFollow 계정을 찾을 수 없습니다."));
         Account passiveFollowAccount = accountRepository.findById(passiveFollowId)
                 .orElseThrow(() -> new NotFoundSourceException("passiveFollow 사진을 찾을 수 없습니다."));
-        Follow follow = followRepository.findByActiveAndPassive(activeFollowId, passiveFollowId);
+        Follow follow = followRepository.findByActiveAndPassive(activeFollowId, passiveFollowId).orElse(null);
 
         if (follow == null) {
             followRepository.save(new Follow(activeFollowAccount, passiveFollowAccount));
@@ -45,12 +45,9 @@ public class FollowService {
         Account activeFollowAccount = accountRepository.findById(activeFollowId)
                 .orElseThrow(() -> new NotFoundSourceException("activeFollow 계정을 찾을 수 없습니다."));
         Account passiveFollowAccount = accountRepository.findById(passiveFollowId)
-                .orElseThrow(() -> new NotFoundSourceException("passiveFollow 사진을 찾을 수 없습니다."));
-        Follow follow = followRepository.findByActiveAndPassive(activeFollowId, passiveFollowId);
-
-        if (follow == null) {
-            throw new NotFoundSourceException("팔로우 관계를 찾을 수 없습니다.");
-        }
+                .orElseThrow(() -> new NotFoundSourceException("passiveFollow 계정을 찾을 수 없습니다."));
+        Follow follow = followRepository.findByActiveAndPassive(activeFollowId, passiveFollowId)
+                .orElseThrow(() -> new NotFoundSourceException("팔로우 관계를 찾을 수 없습니다."));
 
         follow.softDelete();
         activeFollowAccount.removeActiveFollowCount();

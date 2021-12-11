@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import pictureboard.api.domain.entity.Comment;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
 
@@ -30,4 +31,7 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "set c.deleted = true " +
             "where c.picture.id =:pictureId")
     void deleteByPicture(@Param("pictureId") Long pictureId);
+
+    @Query("select c from Comment c join fetch c.account a where c.id =:commentId")
+    Optional<Comment> findWithAccount(@Param("commentId") Long commentId);
 }

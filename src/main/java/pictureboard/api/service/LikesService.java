@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import pictureboard.api.domain.entity.Account;
 import pictureboard.api.domain.entity.Likes;
-import pictureboard.api.domain.constant.OnClickStatus;
 import pictureboard.api.domain.entity.Picture;
 import pictureboard.api.exception.NotFoundSourceException;
 import pictureboard.api.exception.SelfRelateException;
@@ -28,7 +27,7 @@ public class LikesService {
                 .orElseThrow(() -> new NotFoundSourceException("계정을 찾을 수 없습니다."));
         Picture picture = pictureRepository.findById(pictureId)
                 .orElseThrow(() -> new NotFoundSourceException("사진을 찾을 수 없습니다."));
-        Likes likes = likesRepository.findByMemberAndPicture(account, picture);
+        Likes likes = likesRepository.findByAccountAndPicture(account, picture).orElse(null);
 
         if (accountId.equals(picture.getAccount().getId())) {
             throw new SelfRelateException("자기 자신의 사진에 '좋아요'할 수 없습니다.");
@@ -46,14 +45,11 @@ public class LikesService {
                 .orElseThrow(() -> new NotFoundSourceException("계정을 찾을 수 없습니다."));
         Picture picture = pictureRepository.findById(pictureId)
                 .orElseThrow(() -> new NotFoundSourceException("사진을 찾을 수 없습니다."));
-        Likes likes = likesRepository.findByMemberAndPicture(account, picture);
+        Likes likes = likesRepository.findByAccountAndPicture(account, picture)
+                .orElseThrow(() -> new NotFoundSourceException("좋아요 관계를 찾을 수 없습니다."));
 
         if (accountId.equals(picture.getAccount().getId())) {
             throw new SelfRelateException("자기 자신의 사진에 '좋아요'를 없앨 수 없습니다.");
-        }
-
-        if (likes == null) {
-            throw new NotFoundSourceException("좋아요 관계를 찾을 수 없습니다.");
         }
 
         likes.softDelete();

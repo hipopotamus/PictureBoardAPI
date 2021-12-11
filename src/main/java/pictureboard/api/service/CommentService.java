@@ -9,6 +9,7 @@ import pictureboard.api.domain.entity.Comment;
 import pictureboard.api.domain.entity.Picture;
 import pictureboard.api.dto.AccountDto;
 import pictureboard.api.dto.CommentDto;
+import pictureboard.api.exception.AuthException;
 import pictureboard.api.exception.NotFoundSourceException;
 import pictureboard.api.repository.AccountRepository;
 import pictureboard.api.repository.CommentRepository;
@@ -44,7 +45,14 @@ public class CommentService {
     }
 
     @Transactional
-    public void deleteComment(Long commentId) {
+    public void deleteComment(Long loginAccountId, Long commentId) {
+        Comment comment = commentRepository.findWithAccount(commentId)
+                .orElseThrow(() -> new NotFoundSourceException("댓글을 찾을 수 없습니다."));
+        if (!comment.getAccount().getId().equals(loginAccountId)) {
+            throw new AuthException("로그인 계정의 댓글이 아닙니다.");
+        }
+
+        comment.softDelete();
     }
 
     public List<CommentDto> findComment(Long pictureId) {

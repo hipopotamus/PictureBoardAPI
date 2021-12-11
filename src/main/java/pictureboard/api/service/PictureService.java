@@ -52,7 +52,7 @@ public class PictureService {
 
 
         Picture picture = pictureRepository.save(new Picture(title, description, pictureImg, pictureType, account));
-        pictureTagService.createPictureTags(picture.getId(), tagTitles);
+        pictureTagService.createPictureTags(loginAccountId, picture.getId(), tagTitles);
 
         return picture;
     }
@@ -65,7 +65,7 @@ public class PictureService {
         Img pictureImg = new Img("testPicture", "testStorePicture", "testFullPath");
 
         Picture picture = pictureRepository.save(new Picture(title, description, pictureImg, pictureType, account));
-        pictureTagService.createPictureTags(picture.getId(), tagTitles);
+        pictureTagService.createPictureTags(loginAccountId, picture.getId(), tagTitles);
 
         return picture;
     }
@@ -155,7 +155,7 @@ public class PictureService {
 
         Picture picture = pictureRepository.findWithAccount(pictureId)
                 .orElseThrow(() -> new NotFoundSourceException("사진을 찾을 수 없습니다."));
-        if (!picture.getId().equals(loginAccountId)) {
+        if (!picture.getAccount().getId().equals(loginAccountId)) {
             throw new AuthException("로그인 계정의 사진이 아닙니다.");
         }
 

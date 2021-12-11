@@ -8,6 +8,7 @@ import pictureboard.api.domain.entity.Account;
 import pictureboard.api.domain.entity.Follow;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 
@@ -15,8 +16,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             "join f.activeAccount a " +
             "join f.passiveAccount p " +
             "where a.id = :activeFollowId and p.id = :passiveFollowId")
-    Follow findByActiveAndPassive(@Param("activeFollowId") Long activeFollowId,
-                                  @Param("passiveFollowId") Long passiveFollowId);
+    Optional<Follow> findByActiveAndPassive(@Param("activeFollowId") Long activeFollowId,
+                                           @Param("passiveFollowId") Long passiveFollowId);
 
     @Query("select f from Follow f " +
             "join f.activeAccount a " +

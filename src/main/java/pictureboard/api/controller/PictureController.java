@@ -65,23 +65,24 @@ public class PictureController {
 
     @ApiOperation(value = "사진 태그 추가", notes = "'사진의 아이디'와 '하나 이상의 태그'를 받아 사진에 추가합니다.")
     @PostMapping("/picture/tag")
-    public PictureDto updatePictureTags(@Valid @RequestBody PictureTagForm pictureTagForm,
+    public PictureDto updatePictureTags(@ApiIgnore @LoginAccount Long loginAccountId,
+                                        @Valid @RequestBody PictureTagForm pictureTagForm,
                                         @ApiIgnore Errors errors) {
         if (errors.hasErrors()) {
             throw new IllegalFormException(errors);
         }
-        pictureTagService.createPictureTags(pictureTagForm.getId(), pictureTagForm.getTagTitles());
+        pictureTagService.createPictureTags(loginAccountId, pictureTagForm.getId(), pictureTagForm.getTagTitles());
         return pictureService.makePictureDtoById(pictureTagForm.getId());
     }
 
     @ApiOperation(value = "사진 태그 삭제", notes = "'사진의 아이디'와 '하나 이상의 태그'를 받고 사진에서 해당 태그들을 삭제합니다.")
     @DeleteMapping("/picture/tag")
-    public String deletePictureTags(@Valid @RequestBody PictureTagForm pictureTagForm,
+    public String deletePictureTags(@ApiIgnore @LoginAccount Long loginAccountId, @Valid @RequestBody PictureTagForm pictureTagForm,
                                     @ApiIgnore Errors errors) {
         if (errors.hasErrors()) {
             throw new IllegalFormException(errors);
         }
-        pictureTagService.deletePictureTags(pictureTagForm.getId(), pictureTagForm.getTagTitles());
+        pictureTagService.deletePictureTags(loginAccountId, pictureTagForm.getId(), pictureTagForm.getTagTitles());
         return "delete pictureTags success";
     }
 

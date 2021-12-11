@@ -5,17 +5,17 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.security.core.parameters.P;
 import pictureboard.api.domain.entity.Account;
 import pictureboard.api.domain.entity.Likes;
 import pictureboard.api.domain.entity.Picture;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface LikesRepository extends JpaRepository<Likes, Long> {
 
     @Query("select l from Likes l join l.account a join l.picture p where a = :account and p = :picture")
-    Likes findByMemberAndPicture(@Param("account") Account account, @Param("picture") Picture picture);
+    Optional<Likes> findByAccountAndPicture(@Param("account") Account account, @Param("picture") Picture picture);
 
     @Query("select l from Likes l " +
             "join l.account a " +

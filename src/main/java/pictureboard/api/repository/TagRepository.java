@@ -6,12 +6,13 @@ import org.springframework.data.repository.query.Param;
 import pictureboard.api.domain.entity.Tag;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface TagRepository extends JpaRepository<Tag, Long> {
 
     boolean existsByTitle(String tagTitle);
 
-    Tag findByTitle(String tagTitle);
+    Optional<Tag> findByTitle(String tagTitle);
 
     @Query("select t from Tag t order by t.relatedPictureCount desc")
     List<Tag> findAllAndOrderByRelatedPictureCount();
