@@ -30,4 +30,10 @@ public interface LikesRepository extends JpaRepository<Likes, Long> {
             "where l.account.id =:accountId " +
             "or l.picture in (select p From Picture p join p.account a where a.id =:accountId)")
     void deleteByAccount(@Param("accountId") Long accountId);
+
+    @Modifying
+    @Query("update Likes l " +
+            "set l.deleted = true " +
+            "where l.picture.id =:pictureId")
+    void deleteByPicture(@Param("pictureId") Long pictureId);
 }

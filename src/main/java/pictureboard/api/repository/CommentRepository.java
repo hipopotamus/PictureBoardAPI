@@ -24,4 +24,10 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
             "where c.account.id =:accountId " +
             "or c.picture in (select p from Picture p join p.account a where a.id =:accountId)")
     void deleteByAccount(@Param("accountId") Long accountId);
+
+    @Modifying
+    @Query("update Comment c " +
+            "set c.deleted = true " +
+            "where c.picture.id =:pictureId")
+    void deleteByPicture(@Param("pictureId") Long pictureId);
 }

@@ -147,8 +147,8 @@ public class PictureController {
 
     @ApiOperation(value = "사진 삭제", notes = "'사진 아이디'를 받아 해당 사진을 삭제 합니다.")
     @DeleteMapping("/picture/{pictureId}")
-    public String deletePicture(@PathVariable("pictureId") Long pictureId) {
-        pictureService.deletePicture(pictureId);
+    public String deletePicture(@LoginAccount Long loginAccountId, @PathVariable("pictureId") Long pictureId) {
+        pictureService.deletePicture(loginAccountId, pictureId);
         return "delete picture success";
     }
 }

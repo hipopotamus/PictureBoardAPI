@@ -8,6 +8,7 @@ import pictureboard.api.domain.entity.Account;
 import pictureboard.api.domain.entity.Picture;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PictureRepository extends JpaRepository<Picture, Long>, PictureRepositoryCustom {
 
@@ -31,5 +32,8 @@ public interface PictureRepository extends JpaRepository<Picture, Long>, Picture
     @Modifying
     @Query("update Picture p set p.deleted = true where p.account.id =:accountId")
     void deleteByAccount(@Param("accountId") Long accountId);
+
+    @Query("select p from Picture p join fetch p.account a where p.id =:pictureId")
+    Optional<Picture> findWithAccount(@Param("pictureId") Long pictureId);
 
 }

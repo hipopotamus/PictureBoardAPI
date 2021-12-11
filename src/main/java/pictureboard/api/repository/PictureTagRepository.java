@@ -25,4 +25,10 @@ public interface PictureTagRepository extends JpaRepository<PictureTag, Long> {
             "set pt.deleted = true " +
             "where pt.picture in (select p from Picture p join p.account a where a.id =:accountId)")
     void deleteByAccount(@Param("accountId") Long accountId);
+
+    @Modifying
+    @Query("update PictureTag pt " +
+            "set pt.deleted = true " +
+            "where pt.picture.id =:pictureId")
+    void deleteByPicture(@Param("pictureId") Long pictureId);
 }

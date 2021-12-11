@@ -20,8 +20,7 @@ import pictureboard.api.exception.AuthException;
 import pictureboard.api.exception.NotFoundSourceException;
 import pictureboard.api.exception.SelfRelateException;
 import pictureboard.api.form.PictureSearchCond;
-import pictureboard.api.repository.AccountRepository;
-import pictureboard.api.repository.PictureRepository;
+import pictureboard.api.repository.*;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,6 +33,9 @@ public class PictureService {
 
     private final AccountRepository accountRepository;
     private final PictureRepository pictureRepository;
+    private final LikesRepository likesRepository;
+    private final CommentRepository commentRepository;
+    private final PictureTagRepository pictureTagRepository;
     private final FileService fileService;
     private final PictureTagService pictureTagService;
     private final ModelMapper modelMapper;
@@ -149,6 +151,22 @@ public class PictureService {
     }
 
     @Transactional
-    public void deletePicture(Long pictureId) {
+    public void deletePicture(Long loginAccountId, Long pictureId) {
+
+        Picture picture = pictureRepository.findWithAccount(pictureId)
+                .orElseThrow(() -> new NotFoundSourceException("사진을 찾을 수 없습니다."));
+        if (!picture.getId().equals(loginAccountId)) {
+            throw new AuthException("로그인 계정의 사진이 아닙니다.");
+        }
+
+        try {
+            likesRepository.deleteByPicture(pictureId);
+            commentRepository.deleteByPicture(pictureId);
+            pictureTagRepository.deleteByPicture(pictureId);
+        } catch (Exception e) {
+            throw new NotFoundSourceException("사진과 연관된 자원을 삭제할 수 없습니다.");
+        }
+        picture.softDelete();
+
     }
 }
