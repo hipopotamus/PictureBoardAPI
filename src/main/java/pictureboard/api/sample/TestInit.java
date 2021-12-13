@@ -42,6 +42,7 @@ public class TestInit {
         private final FollowService followService;
         private final LikesService likesService;
         private final CommentService commentService;
+        private final ChatRoomService chatRoomService;
 
         public void init() throws IOException {
 
@@ -112,6 +113,11 @@ public class TestInit {
                     commentService.createComment(pictures.get(randomNumber).getId(), account.getId(),
                             account.getNickname() + ": testContent" + i);
                 }
+            }
+
+            //chatroom 생성
+            for (int i = 0; i < 5; i++) {
+                chatRoomService.createChatRoom("ChatRoom" + i);
             }
 
         }

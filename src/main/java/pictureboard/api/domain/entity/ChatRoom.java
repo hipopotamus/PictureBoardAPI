@@ -20,4 +20,11 @@ public class ChatRoom extends BaseTime {
     @Column(name = "chatRoom_id")
     private Long id;
     private String name;
+
+    protected ChatRoom() {
+    }
+
+    public ChatRoom(String name) {
+        this.name = name;
+    }
 }
