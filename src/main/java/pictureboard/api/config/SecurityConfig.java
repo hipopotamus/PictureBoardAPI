@@ -13,10 +13,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.filter.CorsFilter;
+import pictureboard.api.filter.Oauth2SuccessHandler;
 import pictureboard.api.repository.AccountRepository;
 import pictureboard.api.filter.JwtAuthenticationFilter;
 import pictureboard.api.filter.JwtAuthorizationFilter;
 import pictureboard.api.service.CustomOAuth2UserService;
+import pictureboard.api.service.JwtService;
 
 @Configuration
 @EnableWebSecurity
@@ -26,6 +28,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CorsFilter corsFilter;
     private final AccountRepository accountRepository;
     private final CustomOAuth2UserService customOAuth2UserService;
+    private final JwtService jwtService;
+    private final Oauth2SuccessHandler oauth2SuccessHandler;
 
     @Bean
     @Override
@@ -47,18 +51,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http
                 .addFilter(corsFilter)
-                .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), accountRepository));
+                .addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtService))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), accountRepository, jwtService));
 
         http
                 .authorizeRequests()
                 .mvcMatchers("/", "/account", "/login", "/myLogin","/swagger-ui.html", "/webjars/**",
-                        "/v2/**", "/swagger-resources/**", "/stomp/**", "/pub/**", "/sub/**", "/chat/**","/account/test").permitAll()
+                        "/v2/**", "/swagger-resources/**", "/stomp/**", "/pub/**", "/sub/**", "/chat/**").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/picture/**").permitAll()
                 .anyRequest().permitAll();
 
         http
                 .oauth2Login()
+                .successHandler(oauth2SuccessHandler)
                 .userInfoEndpoint()
                 .userService(customOAuth2UserService);
     }

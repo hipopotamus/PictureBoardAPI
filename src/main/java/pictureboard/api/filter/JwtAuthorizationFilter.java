@@ -10,6 +10,8 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 import pictureboard.api.repository.AccountRepository;
 import pictureboard.api.domain.entity.Account;
 import pictureboard.api.domain.UserAccount;
+import pictureboard.api.service.JwtService;
+import pictureboard.api.variable.JwtProperties;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,11 +21,14 @@ import java.io.IOException;
 
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
-    private AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
+    private final JwtService jwtService;
 
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, AccountRepository accountRepository) {
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, AccountRepository accountRepository,
+                                  JwtService jwtService) {
         super(authenticationManager);
         this.accountRepository = accountRepository;
+        this.jwtService = jwtService;
     }
 
     @Override
@@ -37,7 +42,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         String jwtToken = request.getHeader("Authorization").replace("Bearer ", "");
 
-        String username = JWT.require(Algorithm.HMAC512("cos")).build().verify(jwtToken).getClaim("username").asString();
+        String username = jwtService.verifyToken(jwtToken, JwtProperties.SECRET, "username");
 
         if (username != null) {
             Account account = accountRepository.findByUsername(username);

@@ -47,6 +47,13 @@ public class Account extends BaseTime {
     protected Account() {
     }
 
+    //Oauth 생성자
+    public Account(String username, String password, Img profileImg) {
+        this.username = username;
+        this.password = password;
+        this.profileImg = profileImg;
+    }
+
     //회원가입 생성자
     public Account(String username, String password, String nickname, Img profileImg, Gender gender, LocalDate birthDate) {
         this.username = username;

@@ -12,6 +12,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import pictureboard.api.domain.entity.Account;
 import pictureboard.api.domain.UserAccount;
+import pictureboard.api.service.JwtService;
 import pictureboard.api.variable.JwtProperties;
 
 import javax.servlet.FilterChain;
@@ -19,11 +20,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Date;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
 
     @SneakyThrows
     @Override
@@ -41,12 +42,7 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         UserAccount userAccount = (UserAccount) authResult.getPrincipal();
 
-        String jwtToken = JWT.create()
-                .withSubject(userAccount.getUsername())
-                .withExpiresAt(new Date(System.currentTimeMillis() + JwtProperties.EXPIRATION_TIME))
-                .withClaim("id", userAccount.getAccount().getId())
-                .withClaim("username", userAccount.getAccount().getUsername())
-                .sign(Algorithm.HMAC512(JwtProperties.SECRET));
+        String jwtToken = jwtService.createAuthJwtToken(userAccount);
 
         response.addHeader(JwtProperties.HEADER_STRING, JwtProperties.TOKEN_PREFIX + jwtToken);
     }
