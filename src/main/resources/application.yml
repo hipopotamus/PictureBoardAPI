@@ -17,6 +17,16 @@ spring:
     password: 11111111
   profiles:
     active: local
+  messages:
+    basename: messages,errors
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: 520810785196-iq3itkkari9vadjq6sjda8p0ajuqquv9.apps.googleusercontent.com
+            client-secret: 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
+            scope: profile, email
 
   jpa:
     hibernate:
@@ -34,9 +44,8 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
-
-#  messages:
-#    basename: messages,errors
+  level:
+    org.springframework: debug
 
 file:
   profile: /Users/hipo/Desktop/pictureboard/src/main/resources/static/profile_img/

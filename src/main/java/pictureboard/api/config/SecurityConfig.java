@@ -16,6 +16,7 @@ import org.springframework.web.filter.CorsFilter;
 import pictureboard.api.repository.AccountRepository;
 import pictureboard.api.filter.JwtAuthenticationFilter;
 import pictureboard.api.filter.JwtAuthorizationFilter;
+import pictureboard.api.service.CustomOAuth2UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -24,11 +25,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CorsFilter corsFilter;
     private final AccountRepository accountRepository;
-
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    private final CustomOAuth2UserService customOAuth2UserService;
 
     @Bean
     @Override
@@ -38,22 +35,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.
-                csrf().disable();
-        http.
-                sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        .and()
-                .addFilter(corsFilter)
+        http
+                .csrf().disable()
                 .formLogin().disable()
                 .httpBasic().disable()
+                .headers().frameOptions().disable();
+
+
+        http
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+        http
+                .addFilter(corsFilter)
                 .addFilter(new JwtAuthenticationFilter(authenticationManager()))
-                .addFilter(new JwtAuthorizationFilter(authenticationManager(), accountRepository))
+                .addFilter(new JwtAuthorizationFilter(authenticationManager(), accountRepository));
+
+        http
                 .authorizeRequests()
                 .mvcMatchers("/", "/account", "/login", "/myLogin","/swagger-ui.html", "/webjars/**",
-                        "/v2/**", "/swagger-resources/**", "/stomp/**", "/pub/**", "/sub/**", "/chat/**").permitAll()
+                        "/v2/**", "/swagger-resources/**", "/stomp/**", "/pub/**", "/sub/**", "/chat/**","/account/test").permitAll()
                 .mvcMatchers(HttpMethod.GET, "/picture/**").permitAll()
-                .anyRequest().authenticated()
-                ;
+                .anyRequest().permitAll();
+
+        http
+                .oauth2Login()
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService);
     }
 
     @Override
