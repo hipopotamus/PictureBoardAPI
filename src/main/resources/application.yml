@@ -24,15 +24,15 @@ spring:
       client:
         registration:
           google:
-            client-id: 520810785196-iq3itkkari9vadjq6sjda8p0ajuqquv9.apps.googleusercontent.com
-            client-secret: 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
+            client-id: 197659776972-j9defpbc8r4emrm4uqufrs136p8clg38.apps.googleusercontent.com
+            client-secret: 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
             scope: profile, email
           naver:
-            client-id: SrsmgknQFL8sW21Fs482
-            client-secret: xSNkaBhjZ4
+            client-id: Pm4TtJDob6ljZrP_sHbp
+            client-secret: CUOiOaOvXF
             redirect-uri: http://localhost:8080/login/oauth2/code/naver
             authorization_grant_type: authorization_code
-            scope: name, email, profile_imag, birthyear, gender, nickname
+            scope: name, email, profile_imag, gender, nickname
             client-name: Naver
         provider:
           naver:

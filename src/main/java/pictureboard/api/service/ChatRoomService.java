@@ -42,4 +42,5 @@ public class ChatRoomService {
     public ChatRoomDto makeChatRoomDto(ChatRoom chatRoom) {
         return modelMapper.map(chatRoom, ChatRoomDto.class);
     }
+
 }
