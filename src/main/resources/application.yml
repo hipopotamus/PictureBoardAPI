@@ -10,14 +10,9 @@ server:
       tracking-modes: cookie
 
 spring:
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/pictureboard
-    username: root
-    password: 11111111
   profiles:
     active: local
-    include: oauth
+    include: oauth, real
   messages:
     basename: messages,errors
 
