@@ -36,6 +36,6 @@ out/
 ### VS Code ###
 .vscode/
 
-### Oauth Properties###
+### Secret Properties ###
 src/main/resources/application-oauth.yml
 src/main/resources/application-real.yml
