@@ -17,7 +17,6 @@ import java.util.Date;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class AuthService {
 
     private final AuthenticationManager authenticationManager;

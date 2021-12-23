@@ -10,7 +10,6 @@ import pictureboard.api.variable.JwtProperties;
 import java.util.Date;
 
 @Service
-@RequiredArgsConstructor
 public class JwtService {
 
     public String createAuthJwtToken(UserAccount userAccount) {

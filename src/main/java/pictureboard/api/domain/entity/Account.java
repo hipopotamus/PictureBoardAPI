@@ -51,6 +51,7 @@ public class Account extends BaseTime {
     public Account(String username, String password, Img profileImg) {
         this.username = username;
         this.password = password;
+        this.nickname = username;
         this.profileImg = profileImg;
     }
 
@@ -75,7 +76,7 @@ public class Account extends BaseTime {
         return new ArrayList<>();
     }
 
-    //** Follow 추가, 제거
+    //** FollowCount 추가, 제거
     public void addActiveFollowCount() {
         this.activeFollowCount += 1;
     }
@@ -99,8 +100,9 @@ public class Account extends BaseTime {
         }
         this.passiveFollowCount = tmpPassiveFollowCount;
     }
-    //** Follow 추가, 제거
+    //** FollowCount 추가, 제거
 
+    //** 수정
     public void updateNickname(String nickname) {
         this.nickname = nickname;
     }
@@ -108,4 +110,5 @@ public class Account extends BaseTime {
     public void updateProfileImg(Img profileImg) {
         this.profileImg = profileImg;
     }
+    //** 수정
 }

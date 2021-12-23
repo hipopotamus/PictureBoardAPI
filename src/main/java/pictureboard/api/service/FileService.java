@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.util.UUID;
 
 @Service
-@Transactional(readOnly = true)
 public class FileService {
 
     public Img storeFile(MultipartFile multipartFile, String path) throws IOException {
